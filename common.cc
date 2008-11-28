@@ -23,6 +23,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sys/time.h>
+#include <stdlib.h>
 #include "common.h"
 
 // Command-line arguments. Default values here.
