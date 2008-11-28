@@ -1,0 +1,10 @@
+threat detection (don't stop alpha-beta on forced lines)
+logging
+game database
+delete solved pns subtrees
+transpositions: Schijf Proof-Number Search and Transpositions
+do not query EGTB if ep_square is set
+functions should take a tmove, not a tmove*
+pns should use saveboard!
+decrease heuristic for en passant moves in move()
+measure cumulative loss when selecting sub-optimal book moves

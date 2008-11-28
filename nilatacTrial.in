@@ -1,0 +1,11 @@
+nilatacTrial
+
+iset suicide 1
+set 1 fcatalin's SUICIDE ONLY program
+set 2 http://catalin.francu.com/nilatac
+set seek 0
+set autoflag 1
+set formula suicide && !private
+seek 3 0 suicide f
+seek 3 0 u suicide
+resume
