@@ -18,6 +18,7 @@
  **/
 #include <iostream>
 #include <iomanip>
+#include <stdlib.h>
 #include "hash.h"
 
 t_hash_entry* hash_data;
