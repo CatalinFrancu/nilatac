@@ -31,7 +31,7 @@
 #include "pns.h"
 
 void* handle_connection(void* fd_ptr) {
-  int fd = (int)fd_ptr;
+  int fd = (long long int)fd_ptr;
   FILE *f_in = fdopen(fd, "r+t");
   FILE *f_out = fdopen(fd, "wt");
   char s[100];
@@ -105,7 +105,7 @@ void start_server(int port) {
 }
 
 void* start_server_thread_helper(void* port) {
-  start_server((int)port);
+  start_server((long long int)port);
   return NULL;
 }
 
