@@ -1,14 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>Suicide chess book browser</title>
-    <meta name="robots" content="nofollow">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="robots" content="nofollow"/>
   </head>
 
 <body>
 
 <?php
+
+$PIECE_MAP = array('P' => 'pw', 'N' => 'nw', 'B' => 'bw', 'R' => 'rw', 'Q' => 'qw', 'K' => 'kw',
+                   'p' => 'pb', 'n' => 'nb', 'b' => 'bb', 'r' => 'rb', 'q' => 'qb', 'k' => 'kb', '-' => '');
+
 function pretty_print_query($query) {
   $halfmove = 0;
   $reassembled = "";
@@ -80,10 +85,9 @@ print "<tr><td style=\"padding: 0px; border: 1px solid gray; white-space: no-wra
 for ($i = 0; $i < 8; $i++) {
   for ($j = 0; $j < 8; $j++) {
     $bg = (($i + $j) % 2) ? 'b' : 'w';
-    $fg = $board{$i * 8 + $j};
+    $fg = $PIECE_MAP[$board[$i * 8 + $j]];
     if ($fg == '-') $fg = "";
-    print "<img src=\"images/" . $fg . $bg . ".png\" " .
-      "alt=\"" . $fg . $bg ."\"/>";
+    print "<img src=\"images/{$fg}{$bg}.png\" alt=\"{$fg}{$bg}\"/>";
   }
   print "<br/>\n";
 }
