@@ -667,9 +667,13 @@ t_pns_result pns_main(tboard* b, t_pns_data* data, int max_nodes,
     update_ancestors(&data->b_current, mpn, data == book);
     if (data == book && (!mpn->proof || !mpn->disproof))
       (*pns_hash)[data->b_current.hashValue] = mpn;
-    if (data == book && ++round_robin == FLAGS_save_every) {
-      round_robin = 0;
-      save_pns_tree(BOOK_FILENAME, data);
+    if (data == book) {
+      if (++round_robin == FLAGS_save_every) {
+	round_robin = 0;
+	save_pns_tree(BOOK_FILENAME, data);
+      } else {
+	cerr << "Saving in " << (FLAGS_save_every - round_robin) << " iterations\n";
+      }
     }
     if (timer_expired) break; // Loop at least once.
   }
