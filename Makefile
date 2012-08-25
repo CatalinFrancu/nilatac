@@ -36,13 +36,13 @@ browse: bin nilatac-pn
 no_egtb: bin nilatac nilatac-pn
 
 nilatac: $(OBJ) nilatac.cc
-	g++ $(CC_OPT) -lpthread -o nilatac $(OBJ) nilatac.cc
+	g++ $(CC_OPT) -pthread -o nilatac $(OBJ) nilatac.cc
 
 nilatac-pn: $(OBJ) nilatac-pn.cc
-	g++ $(CC_OPT) -lpthread -o nilatac-pn $(OBJ) nilatac-pn.cc
+	g++ $(CC_OPT) -pthread -o nilatac-pn $(OBJ) nilatac-pn.cc
 
 lenthep: $(OBJ) lenthep.cc
-	g++ $(CC_OPT) -lpthread -o lenthep $(OBJ) lenthep.cc
+	g++ $(CC_OPT) -pthread -o lenthep $(OBJ) lenthep.cc
 
 bin/common.o: common.cc common.h
 	g++ $(CC_OPT) -c -o bin/common.o common.cc
