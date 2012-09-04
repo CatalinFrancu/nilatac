@@ -1,0 +1,112 @@
+body {
+  font-family: arial;
+  margin: 0px;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+div.title {
+  background: #444;
+  color: white;
+  font-size: 20px;
+  padding: 5px 10px;
+}
+
+span.plug {
+  color: #ff7700;
+}
+
+div.moveList {
+  background: #eee;
+  border-bottom: 1px solid #444;
+  margin-bottom: 5px;
+  padding: 5px 10px;
+}
+
+div.contents {
+  float: left;
+  padding: 0px 10px;
+  width: 450px;
+}
+
+div.boardContainer {
+  float: left;
+}
+
+div.summary {
+  float: left;
+  margin-left: 50px;
+  margin-top: 85px;
+}
+
+table.board {
+  box-shadow: 5px 5px 2px #888888;
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table.board td {
+  border: 0px;
+  padding: 0px;
+}
+
+div.moveDiv {
+  margin-top: 20px;
+}
+
+table.moves {
+  border: 1px solid black;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table.moves tr.evenRow {
+  background: #eee;
+}
+
+table.moves td, table.moves th {
+  border: 1px solid #777;
+  padding: 2px 10px;
+}
+
+table.moves th {
+  background: #ccc;
+}
+
+table.moves td.number {
+  text-align: right;
+}
+
+div.description {
+  float: left;
+  margin-left: 40px;
+  padding-top: 10px;
+  width: 500px;
+}
+
+span.moveNo {
+  font-weight: bold;
+}
+
+span.lost {
+  color: #800;
+}
+
+span.won {
+  color: #080;
+}
+
+a:link {
+  color: #00c;
+}
+
+a:visited {
+  color: #60c;
+}
+
+a:hover {
+  color: #66c;
+}
