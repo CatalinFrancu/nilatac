@@ -4,7 +4,7 @@
   <head>
     <title>Suicide chess book browser</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <link href="web/book.css" rel="stylesheet" type="text/css"/>
+    <link href="web/book.css?v=2" rel="stylesheet" type="text/css"/>
 
     <style type="text/css">
     </style>
