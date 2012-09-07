@@ -92,11 +92,11 @@ span.moveNo {
 }
 
 span.lost {
-  color: #800;
+  color: #c00;
 }
 
 span.won {
-  color: #080;
+  color: #0c0;
 }
 
 a:link {
