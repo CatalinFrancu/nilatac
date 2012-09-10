@@ -12,7 +12,6 @@
   </head>
 
   <body>
-
     <div class="title">
       Suicide chess book browser by <span class="plug">nilatac</span>
     </div>
