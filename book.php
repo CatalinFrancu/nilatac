@@ -56,6 +56,8 @@ if (!$query) {
   $desc = 'creditsTop.tpl';
 } else if (startsWith($query, 'e3+Nc6')) {
   $desc = 'credits_e3Nc6.tpl';
+} else if (startsWith($query, 'e3+b5+Bxb5+Nh6') || startsWith($query, 'e3+b5+Bxb5+Ba6') || startsWith($query, 'e3+b5+Bxb5+e6')) {
+  $desc = 'credits_e3b5_last3.tpl';
 } else if (startsWith($query, 'e3+c6+Bb5+cxb5+b4+b6+Ke2+a5+bxa5+bxa5+c4+bxc4+Kd3+cxd3+a4+Na6+e4+Qc7+e5+Qxc1+Qxc1+Rb8+Qxc8+Rxb1+Rxb1+Nb4+Qxe8+g6+Qxf7+e6+Qxd7+Bd6+Qxh7+Rxh7+exd6+Rxh2+Rxh2+g5+Rxb4+axb4+g4')) {
   $desc = 'credits_e3c6.tpl';
 } else {
