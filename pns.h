@@ -25,7 +25,7 @@ using namespace __gnu_cxx;
 
 // Hard-coded limit of the PNS tree size
 #define PNS_SIZE 2000000
-#define PNS_BOOKSIZE 10000000
+#define PNS_BOOKSIZE 6000000
 // A book node can be trimmed if the solution is at most this many nodes:
 #define PNS_BOOK_TRIVIAL 2000000
 
