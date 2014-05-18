@@ -1,6 +1,6 @@
 <?php
 
-require_once 'smarty/Smarty.class.php';
+require_once 'smarty3/Smarty.class.php';
 
 define('INFINITY', 1000000000);
 $PIECE_MAP = array('P' => 'pw', 'N' => 'nw', 'B' => 'bw', 'R' => 'rw', 'Q' => 'qw', 'K' => 'kw',
