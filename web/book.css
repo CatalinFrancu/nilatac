@@ -7,6 +7,10 @@ h3 {
   font-size: 16px;
 }
 
+p {
+  margin-left: 10px;
+}
+
 div.title {
   background: #444;
   color: white;
@@ -51,6 +55,10 @@ table.board {
 table.board td {
   border: 0px;
   padding: 0px;
+}
+
+img {
+  display: block;
 }
 
 div.moveDiv {
