@@ -33,8 +33,9 @@ $board = array();
 for ($i = 0; $i < 8; $i++) {
   for ($j = 0; $j < 8; $j++) {
     $bg = (($i + $j) % 2) ? 'b' : 'w';
-    $fg = $PIECE_MAP[$linearBoard[$i * 8 + $j]];
-    $board[$i][$j] = $fg . $bg;
+    $fg = $linearBoard[$i * 8 + $j];
+    $board[$i][$j]['img'] = $PIECE_MAP[$fg] . $bg;
+    $board[$i][$j]['alt'] = ($fg == '-') ? '·' : $fg;
   }
 }
 
