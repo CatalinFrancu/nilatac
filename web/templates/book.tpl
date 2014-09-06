@@ -35,7 +35,7 @@
           {foreach from=$board item=rank}
             <tr>
               {foreach from=$rank item=square}
-                <td><img src="web/images/{$square}.png" alt="{$square}"></td>
+                <td><img src="web/images/{$square.img}.png" alt="{$square.alt}"></td>
               {/foreach}
             </tr>
           {/foreach}
