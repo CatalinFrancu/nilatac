@@ -309,27 +309,37 @@ t_pns_node* select_mpn(t_pns_node* node, t_pns_data* data) {
   data->b_current = data->b_orig;
   while (node->num_children) {
     int best_child = 0;
+    int rnd = rand();
     if (node->proof == INF_NODES) {
-      // If node is INF | FIN, search for a child of the form FIN | INF where
-      // FIN is the lowest possible (but not 0). This avoids some traps where
-      // PN search will say the last child has values 1|INF, and never come
-      // back to it before solving all the other children, when in fact this
-      // child is in pretty good shape.
-      int min_proof = INF_NODES;
-      for (int i = 0; i < node->num_children; i++)
-        if (node->child[i]->proof && node->child[i]->proof < min_proof) {
-          min_proof = node->child[i]->proof;
-          best_child = i;
+      // If node is INF | FIN, choose one of the surviving children at random.
+      int numChoices = 0;
+      for (int i = 0; i < node->num_children; i++) {
+        if (node->child[i]->proof) {
+          numChoices++;
+          if (rnd % numChoices == 0) {
+            best_child = i;
+          }
         }
+      }
     } else if (data == book && FLAGS_by_ratio) {
       for (int i = 1; i < node->num_children; i++)
         if (node->child[i]->ratio > node->child[best_child]->ratio)
           best_child = i;
     } else {
       // If node is FIN | x, search for a child of the form x | FIN.
+      // If there are multiple choices, pick one at random.
       // The other cases are either absurd (e.g. 0 | FIN) or they cannot
       // happen as they do not require analysis (e.g. INF | INF).
-      while (node->child[best_child]->disproof != node->proof) best_child++;
+      int numChoices = 0;
+      int rnd = rand();
+      for (int i = 0; i < node->num_children; i++) {
+        if (node->child[i]->disproof == node->proof) {
+          numChoices++;
+          if (rnd % numChoices == 0) {
+            best_child = i;
+          }
+        }
+      }
     }
 
     node = node->child[best_child];
