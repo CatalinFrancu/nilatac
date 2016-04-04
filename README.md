@@ -16,7 +16,7 @@ If you have questions or contributions, please contact me - I still have a gener
 ## Installation instructions (GNU/Linux)
 
 * Get the code from this page.
-* Optionally, get the end-game table files from <link TBD>. Unpack the archive. Place the four files in the `egtb/` subdirectory. There already exists an `egtb` symlink as a memento, but feel free to change that.
+* Optionally, get the end-game table files from [link TBD]. Unpack the archive. Place the four files in the `egtb/` subdirectory. There already exists an `egtb` symlink as a memento, but feel free to change that.
 * Choose a make target (read the Makefile for details).
 * Run `make <target>`.
 
