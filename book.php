@@ -73,7 +73,7 @@ fclose($sock);
 
 $smarty = new Smarty();
 $smarty->template_dir = 'web/templates';
-$smarty->compile_dir = 'web/templates_c';
+$smarty->compile_dir = '/tmp/templates_c';
 $smarty->assign('moveList', $moveList);
 $smarty->assign('board', $board);
 $smarty->assign('position', $position);
