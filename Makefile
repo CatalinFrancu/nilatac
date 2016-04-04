@@ -29,11 +29,11 @@ endif
 CC_OPT = -Wall -O3 $(WEAK_OPT)
 
 
-all: bin nilatac nilatac-pn
-weak: bin nilatac
-research: bin nilatac-pn
-browse: bin nilatac-pn
-no_egtb: bin nilatac nilatac-pn
+all: bin unzip nilatac nilatac-pn
+weak: bin unzip nilatac
+research: bin unzip nilatac-pn
+browse: bin unzip nilatac-pn
+no_egtb: bin unzip nilatac nilatac-pn
 
 nilatac: $(OBJ) nilatac.cc
 	g++ $(CC_OPT) -pthread -o nilatac $(OBJ) nilatac.cc
@@ -61,6 +61,9 @@ bin/suicide.o: suicide.cc suicide.h
 
 bin/webserver.o: webserver.cc webserver.h
 	g++ $(CC_OPT) -c -o bin/webserver.o webserver.cc
+
+unzip:
+	gunzip -k book.in.gz
 
 bin:
 	mkdir -p bin
