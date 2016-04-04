@@ -71,4 +71,4 @@ bin:
 
 clean:
 	rm -rf bin
-	rm -f nilatac nilatac-pn lenthep egtb *~
+	rm -f nilatac nilatac-pn lenthep egtb book.in *~
