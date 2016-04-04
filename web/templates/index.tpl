@@ -59,12 +59,7 @@ solve a few more openings. But it's the bad kind of "time permitting", the kind 
 
 <h3>Downloads</h3>
 
-<p>Nilatac is free software. You can <a href="http://voronet.francu.com/repos/nilatac">browse the source code</a> or download a copy with
-  Subversion:</p>
-
-<pre>
-    svn checkout http://voronet.francu.com/repos/nilatac
-</pre>
+<p>Nilatac is free software. <a href="https://github.com/CatalinFrancu/nilatac">Get the source code!</a></p>
 
 <p>I will seed the EGTB files on torrents once anybody asks. :-)</p>
 
