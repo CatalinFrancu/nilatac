@@ -38,3 +38,13 @@ You probably won't need this, but it's there. It allows you to expand leaf nodes
 * Run `./nilatac-pn browse`
   * This also opens port 5000 as in the previous section.
 * There is no documentation here, sorry. Please read the function `browse_pns_tree()` in `pns.cc` for a list of commands.
+
+## Book research
+
+If you'd like to let Nilatac investigate some openings, run something like:
+
+```
+./nilatac-pn --save_every=100 analyze --movelist="c3 e6 Na3"
+```
+
+You can stop the research at any time with Ctrl-C, but you will lose unsaved progress (hence the flag `--save-every`).
