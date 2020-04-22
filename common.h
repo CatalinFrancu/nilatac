@@ -48,13 +48,8 @@ extern bool   FLAGS_by_ratio;
 extern int    FLAGS_save_every;
 
 // Global variables, mostly for zippy
-extern int g_time;
-extern int g_opptime;
-extern int g_increment;     // all in centiseconds
-extern bool g_force;    // when true, do not automatically move
+extern int g_increment; // in centiseconds
 extern string g_oppname;
-extern int g_reversible;
-extern bool g_offered_draw;
 extern bool g_winning_line_found;
 
 enum { EMPTY = 0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
@@ -110,8 +105,6 @@ typedef struct {
   int count;
   tmove move[200];
 } tmovelist;
-
-extern tboard b;
 
 // A saverec saves the differences between two boards;
 typedef struct {

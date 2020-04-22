@@ -106,7 +106,7 @@ void parse_command_line(int argc, char** argv) {
 
 int main(int argc, char** argv) {
   parse_command_line(argc, argv);
-  
+
   init_common();
   init();
 
@@ -141,11 +141,11 @@ int main(int argc, char** argv) {
     for (int i = 2; i < argc; i++) {
       int config = string_to_config(argv[i]);
       if (config == -1) {
-	cerr << "Cannot find config " << argv[i] << endl;
-	exit(1);
+        cerr << "Cannot find config " << argv[i] << endl;
+        exit(1);
       }
       else {
-	egtb_create(config, config + 1);
+        egtb_create(config, config + 1);
       }
     }
 

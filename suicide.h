@@ -25,7 +25,7 @@ void init(); // needs to be here as it calls preprocessMoves()
 void restart();
 int canmove(tboard* b);
 void play_opening();
-void play_best_move(int centis);
+tmove find_best_move(tboard* b, int centis);
 // returns 0 for success, -1 for error
 int execute_move(char* s, tboard* b);
 

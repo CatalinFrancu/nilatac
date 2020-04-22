@@ -39,13 +39,8 @@ bool   FLAGS_by_ratio = false;  // Select book mpn by ratio or by proof number
 int    FLAGS_save_every = 5;
 
 // Global variables, mostly for zippy
-int g_time = 0;
-int g_opptime = 0;
 int g_increment = 0;     // all in centiseconds
-bool g_force = false;    // when true, do not automatically move
 string g_oppname = "";
-int g_reversible = 0;    // number of reversible half-moves
-bool g_offered_draw = false;
 bool g_winning_line_found = false;
 
 const tmove INVALID_MOVE = { -1, -1, -1, -1 };
@@ -71,6 +66,7 @@ void info(string s) {
 
 void fatal(string s) {
   cerr << "[FATAL] " << s << endl;
+  cout << "[FATAL] " << s << endl;
   exit(1);
 }
 
@@ -594,7 +590,7 @@ string movetostring(tmove m) {
   s[0] = file(m.from) + 'a'; s[1] = (7 - rank(m.from)) + '1';
   s[2] = file(m.to) + 'a'; s[3] = (7 - rank(m.to)) + '1';
   if (m.prom != EMPTY) {
-    s[4] = piecename[abs(m.prom)]; // Generate lowercase letter for promotion
+    s[4] = tolower(piecename[abs(m.prom)]);
     s[5] = 0;
   }
   else s[4] = 0;

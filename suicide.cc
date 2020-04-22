@@ -31,22 +31,19 @@ tmove killer[MAXDEPTH + 1];
 int positions; // The number of positions evaluated
 int kibitzed; // What have we kibitzed most recently?
 
-typedef enum {
-              KIB_NONE = 0,
-              KIB_WIN,
-              KIB_DRAW,
-              KIB_LOSS,
-} kib_reason;
+typedef enum
+  {
+   KIB_NONE = 0,
+   KIB_WIN,
+   KIB_DRAW,
+   KIB_LOSS,
+  } kib_reason;
 
 void restart(void) {
-  fen_to_board(NEW_BOARD, &b);
   kibitzed = KIB_NONE;
   book_optimality = 1.0;
 
-  g_force = false;
-  g_reversible = 0;
   g_winning_line_found = false;
-  g_offered_draw = false;
 }
 
 void init(void) {
@@ -61,10 +58,6 @@ void init(void) {
 void kibitz(int kib, const char* reason) {
   switch (kib) {
     case KIB_WIN:
-      if (kibitzed == KIB_LOSS)
-        cout << "kibitz You could have won this!\n";
-      if (kibitzed == KIB_DRAW)
-        cout << "kibitz You could have drawn this!\n";
       if (kibitzed != KIB_WIN) {
         cout << "kibitz " << reason << endl;
         g_winning_line_found = true;
@@ -74,14 +67,9 @@ void kibitz(int kib, const char* reason) {
       if (kibitzed == KIB_WIN) {
         cout << "kibitz You have probably found a bug in me. I should have won "
              << "this game and I missed it. Lucky you!\n";
-        cout << "resign\n";
       }
-      if (kibitzed == KIB_LOSS)
-        cout << "kibitz You could have won this!\n";
       if (kibitzed != KIB_DRAW) {
         cout << "kibitz " << reason << endl;
-        puts("offer draw");
-        g_offered_draw = true;
       }
       break;
     case KIB_LOSS:
@@ -92,9 +80,6 @@ void kibitz(int kib, const char* reason) {
       }
       if (kibitzed != KIB_LOSS)
         cout << "kibitz " << reason << endl;
-      break;
-    case KIB_NONE:
-      cout << "kibitz " << reason << endl;
       break;
     default: assert(0);
   }
@@ -250,13 +235,13 @@ int eval_board(tboard* b, int depth, int alpha, int beta) {
 
 // Makes the best move it finds. If sec is 0, runs a fixed minimum-depth
 // search.
-tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
+tmove find_best_move_alpha_beta(tboard* b, tmovelist* m, int centis) {
   depth_completed = best_score = positions = 0;
   hs_hits = hs_reads = 0;
 
   // Drop the losing moves and half of the surviving moves
   set_alarm(centis / 2);
-  int pns_score = pns_trim_move_list(&b, m, 4000000);
+  int pns_score = pns_trim_move_list(b, m, 4000000);
   if (pns_score == WIN) {
     kibitz(KIB_WIN, "I got lucky!");
     return m->move[0];
@@ -278,9 +263,9 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
     for (int i = 0; i < m->count && level_score != WIN && (!timer_expired || depth == MINDEPTH);
          i++) {
       tsaverec sr;
-      saveboard(&b, m->move[i], &sr);
-      move(&b, m->move[i]);
-      int value = -eval_board(&b, depth, -INFTY, -level_score + 1);
+      saveboard(b, m->move[i], &sr);
+      move(b, m->move[i]);
+      int value = -eval_board(b, depth, -INFTY, -level_score + 1);
       // Do not overwrite values if we timed out
       if (!timer_expired || depth == MINDEPTH) {
         values[i] = value;
@@ -288,7 +273,7 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
         cerr << movetostring(m->move[i]) << " -> " << values[i] << endl;
         if (value > level_score) level_score = values[i];
       }
-      restoreboard(&b, &sr);
+      restoreboard(b, &sr);
     }
 
     if (!timer_expired || depth == MINDEPTH) {
@@ -317,7 +302,7 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
   // Find the first move that does not lead to a forced loss
   tboard baux;
   for (int i = 0; i < m->count; i++) {
-    baux = b;
+    baux = *b;
     move(&baux, m->move[i]);
 
     set_alarm(centis / 6);
@@ -337,21 +322,21 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
 
 // Returns WIN, -WIN or DRAW and sets mv accordingly. If mv is INVALID, then
 // the return value should be ignored.
-int query_egtb(tmove *mv) {
+int query_egtb(tboard* b, tmove *mv) {
   tmovelist ml;
   tboard new_b;
-  int egtb_score = egtb_lookup(&b);
+  int egtb_score = egtb_lookup(b);
   cerr << "            EGTB score: " << egtb_score << endl;
   if (egtb_score != EGTB_UNKNOWN) {
     if (egtb_score == EGTB_DRAW || egtb_score < 0) {
       // Find a move that draws, or loses in as many moves as possible
       int longest_loss = -1, longest_move = -1;
-      getallvalidmoves(&b, &ml);
+      getallvalidmoves(b, &ml);
       if (ml.count == 0) {
         *mv = INVALID_MOVE; return EGTB_DRAW;
       }
       for (int i = 0; i < ml.count; i++) {
-        new_b = b;
+        new_b = *b;
         move(&new_b, ml.move[i]);
         int child_score = egtb_lookup_inclusive(&new_b);
         assert(child_score != EGTB_UNKNOWN);
@@ -375,12 +360,12 @@ int query_egtb(tmove *mv) {
 
     if (egtb_score >= 0) {
       // Find a move for the shortest win
-      getallvalidmoves(&b, &ml);
+      getallvalidmoves(b, &ml);
       if (ml.count == 0) {
         *mv = INVALID_MOVE; return EGTB_DRAW;
       }
       for (int i = 0; i < ml.count; i++) {
-        new_b = b;
+        new_b = *b;
         move(&new_b, ml.move[i]);
         int child_score = egtb_lookup_inclusive(&new_b);
         if (child_score < 0 && child_score >= -egtb_score) {
@@ -402,12 +387,12 @@ int query_egtb(tmove *mv) {
 
 // m - a non-trivial move list (at least two moves to choose from)
 // centis - how much time we're allowed to think
-tmove find_best_move_pns(tmovelist* m, int centis) {
+tmove find_best_move_pns(tboard* b, tmovelist* m, int centis) {
   // If we've found a winning line from the book, give ourselves a lot of
   // nodes to make sure we find it (the opening book solves lines down
   // to nodes that are 1000000-pns-solvable)
-  if (g_winning_line_found || kibitzed == KIB_WIN) {
-    t_pns_result res = pns_main(&b, pns_space, 0, NULL);
+  if (g_winning_line_found) {
+    t_pns_result res = pns_main(b, pns_space, 0, NULL);
     if (!res.proof)
       return res.mv;
     else
@@ -421,7 +406,7 @@ tmove find_best_move_pns(tmovelist* m, int centis) {
 
   for (int i = 0; i < m->count; i++) {
     proof[i] = disproof[i] = 1;
-    resulting_b[i] = b;
+    resulting_b[i] = *b;
     move(resulting_b + i, m->move[i]);
     s[i] = movetostring(m->move[i]);
   }
@@ -496,12 +481,12 @@ tmove find_best_move_pns(tmovelist* m, int centis) {
 // A general routine that does a few generic tasks (like querying the
 // EGTB and the opening book) and then invokes a more specific algorithm
 // to find the best move in a non-trivial position.
-tmove find_best_move(int centis) {
+tmove find_best_move(tboard* b, int centis) {
   // First, look up the position in the EGTB
   if (USE_EGTB && !WEAKENED) {
-    if (b.whitecount && b.blackcount && b.whitecount + b.blackcount <= MEN) {
+    if (b->whitecount && b->blackcount && b->whitecount + b->blackcount <= MEN) {
       tmove mv;
-      int egtb_score = query_egtb(&mv);
+      int egtb_score = query_egtb(b, &mv);
       if (mv.from != -1) {
         if (egtb_score == EGTB_DRAW) {
           kibitz(KIB_DRAW, "Precomputed draw");
@@ -523,7 +508,7 @@ tmove find_best_move(int centis) {
   tmovelist m;
   if (USE_BOOK && !WEAKENED) {
     tmove book_move;
-    int book_score = query_book(&b, &book_move);
+    int book_score = query_book(b, &book_move);
     if (book_score == WIN) {
       kibitz(KIB_WIN, "This opening is a known loss");
       return book_move;
@@ -533,10 +518,10 @@ tmove find_best_move(int centis) {
     if (book_score == DRAW) return book_move;
 
     // If the position is losing or not in the book, keep all the moves
-    getallvalidmoves(&b, &m);
+    getallvalidmoves(b, &m);
   } else {
     // No book, just get the valid moves
-    getallvalidmoves(&b, &m);
+    getallvalidmoves(b, &m);
   }
 
   // Trivial cases: zero or one moves in the list
@@ -544,36 +529,8 @@ tmove find_best_move(int centis) {
   if (m.count == 1) return m.move[0];
 
   return WEAKENED
-    ? find_best_move_pns(&m, centis)
-    : find_best_move_alpha_beta(&m, centis);
-}
-
-// Move mv is about to be made on board b. Increase or reset g_reversible.
-inline void update_reversible(tboard* b, tmove mv) {
-  if (z(b->b[mv.from]) == PAWN ||
-      b->b[mv.to] != EMPTY)
-    g_reversible = 0;
-  else
-    g_reversible++;
-}
-
-void play_best_move(int centis) {
-  char ss[100];
-  sprintf(ss, "[NILATAC] Thinking for %d centis", centis);
-  info(ss);
-
-  tmove mv = find_best_move(centis);
-  if (mv.from == -1) return; // Nothing to move
-  update_reversible(&b, mv);
-  move(&b, mv);
-
-  string s = movetostring(mv);
-  info(s);
-  cout << "move " << s << endl << flush;
-
-  // Claim a draw on the 50 move rule
-  if (g_reversible >= 100)
-    puts("offer draw");
+    ? find_best_move_pns(b, &m, centis)
+    : find_best_move_alpha_beta(b, &m, centis);
 }
 
 // Blindly executes the specified move.
@@ -583,7 +540,6 @@ int execute_move(char *s, tboard* b) {
   getallvalidmoves(b, &ml);
   for (int i = 0; i < ml.count; i++)
     if (same_move(mv, ml.move[i])) {
-      update_reversible(b, mv);
       move(b, mv);
       return 0;
     }

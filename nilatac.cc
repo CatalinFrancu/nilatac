@@ -16,71 +16,159 @@
  * along with Nilatac; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
 #include "suicide.h"
 
+const char* SPC = " ";
+
 inline char* get_token(char* s) {
   return strtok(s, " \t\n");
 }
 
-int allocate_time() {
+/**
+ * Calculates how much time we can afford to think given our remaining time
+ * and the opponent's remaining time. All values are in centis.
+ */
+int allocate_time(int my_time, int opp_time) {
   // If I have under 5 seconds left, or I am more than 3 seconds behind the
   // opponent with less than 20 seconds left, move quickly.
-  if (g_time < 500 ||
-      (g_time <= 2000 && (g_time < g_opptime - 300)))
+  if (my_time < 500 ||
+      (my_time <= 2000 && (my_time < opp_time - 300)))
     return 10; // 0.1 seconds
 
-  return g_time / 15 + g_increment * 2 / 3;
+  return my_time / 15 + g_increment * 2 / 3;
+}
+
+void parse_option(char* name, char* value) {
+  if (strcmp(strtok(NULL, " "), "name")) {
+    fatal("UCI: \"setoption\" should be followed by \"name\"");
+  }
+  name[0] = value[0] = '\0';
+  int onName = true;
+  char *t;
+  while ((t = strtok(NULL, " ")) != NULL) {
+    if (!strcmp(t, "value")) {
+      onName = false;
+    } else if (onName) {
+      if (name[0]) {
+        strcat(name, SPC);
+      }
+      strcat(name, t);
+    } else {
+      if (value[0]) {
+        strcat(value, SPC);
+      }
+      strcat(value, t);
+    }
+  }
+}
+
+void set_position(tboard* b) {
+  char *t = strtok(NULL, " ");
+  if (!strcmp(t, "startpos")) {
+    fen_to_board(NEW_BOARD, b);
+  } else if (!strcmp(t, "fen")) {
+    // the FEN notation has exactly six words
+    char fen[100] = "";
+    for (int i = 0; i < 6; i++) {
+      if (i) {
+        strcat(fen, SPC);
+      }
+      strcat(fen, strtok(NULL, " "));
+    }
+    fen_to_board(fen, b);
+  } else {
+    fatal((string)"UCI: Unknown position type [" + t + "]");
+  }
+
+  t = strtok(NULL, " ");
+  if (t && !strcmp(t, "moves")) {
+    while ((t = strtok(NULL, " ")) != NULL) {
+      int error = execute_move(t, b);
+      if (error) {
+        fatal((string)"Incorrect move [" + t + "]");
+      }
+    }
+  }
+
+  // printboard(b);
+}
+
+void parse_go(tboard* b) {
+  char* cmd;
+  int my_time = 0, opp_time = 0; // in millis
+
+  while ((cmd = strtok(NULL, " ")) != NULL) {
+    if (!strcmp(cmd, "wtime") || !strcmp(cmd, "btime")) {
+      if ((b->side == WHITE) ^ !strcmp(cmd, "btime")) {
+        my_time = atoi(strtok(NULL, " "));
+      } else {
+        opp_time = atoi(strtok(NULL, " "));
+      }
+    } else if (!strcmp(cmd, "movestogo")) {
+      strtok(NULL, " "); // ignore one argument
+    } else {
+      fatal((string)"Unknown go command [" + cmd + "]");
+    }
+  }
+
+  int centis = allocate_time(my_time / 10, opp_time / 10); // convert to centis
+  info((string)"[NILATAC] Thinking for " + to_string(centis) + " centis");
+
+  tmove mv = find_best_move(b, centis);
+  if (mv.from != -1) { // not stalemate
+    cout << "bestmove " << movetostring(mv) << endl << flush;
+  }
 }
 
 int main(void) {
-  // Quickly send features to xboard
-  setbuf(stdout, NULL);
-  puts("feature analyze=0");
-  puts("feature colors=0");
-  puts("feature myname=\"Nilatac\"");
-  puts("feature name=1");
-  puts("feature setboard=1");
-  puts("feature sigint=0");
-  puts("feature sigterm=0");
-  puts("feature usermove=1");
-  puts("feature variants=\"suicide\"");
-  puts("feature done=1");
 
-  char s[100];
+  tboard b;
+
   init_common();
   init();
   restart();
 
-  while (fgets(s, 100, stdin)) {
+  setbuf(stdout, NULL);
+  char s[10000], name[1000], value[1000];
+  while (fgets(s, 1000, stdin)) {
     s[strlen(s) - 1] = '\0';
     char* command = get_token(s);
 
-    if (!strcmp(command, "draw")) {
-      // Accept draw (a) if we offered one, (b) if 7 moves have passed, but
-      // unless (c) we have found a win
-      if ((g_offered_draw || g_reversible >= 14) && !g_winning_line_found) {
-        printf("tellall Agreed, %s!\n", g_oppname.c_str());
-        printf("offer draw");
-      } else if (g_winning_line_found) {
-        puts("tellall Nice try, but I already have a winning line");
-        puts("tellics decline");
-      } else { // g_reversible < 14 && !g_offered_draw
-        printf("tellall Sorry %s, but I only accept draws after 7 "
-               "reversible moves (no captures, no pawn pushes)\n",
-               g_oppname.c_str());
-        puts("tellics decline");
+    if (!strcmp(command, "uci")) {
+      printf("id name Nilatac\n");
+      printf("id author Cătălin Frâncu\n");
+      printf("option name UCI_Variant type combo default suicide var suicide\n");
+      printf("uciok\n");
+
+    } else if (!strcmp(command, "isready")) {
+      printf("readyok\n");
+
+    } else if (!strcmp(command, "setoption")) {
+      parse_option(name, value);
+      if (!strcasecmp(name, "UCI_Variant")) {
+        if (strcasecmp(value, "suicide")) {
+          fatal("Nilatac only plays suicide");
+        }
+      } else {
+        // ignore other options
       }
 
-    } else if (!strcmp(command, "force")) {
-      g_force = true;
+    } else if (!strcmp(command, "ucinewgame")) {
+      restart();
+
+    } else if (!strcmp(command, "position")) {
+      set_position(&b);
 
     } else if (!strcmp(command, "go")) {
-      g_force = false;
-      play_best_move(allocate_time());
+      parse_go(&b);
+
+    } else if (!strcmp(command, "quit")) {
+      break;
 
     } else if (!strcmp(command, "level")) {
       // We are only interested in the third argument, the increment
@@ -94,35 +182,10 @@ int main(void) {
         printf("tellall Hello %s! This is a *suicide* game. If you don't want "
                "to play suicide, type \"abort\" now.\n", g_oppname.c_str());
 
-    } else if (!strcmp(command, "new")) {
-      restart();
-
-    } else if (!strcmp(s, "otim")) {
-      g_opptime = atoi(get_token(NULL));
-
     } else if (!strcmp(command, "protover")) {
       info((string)"Protocol version " + get_token(NULL));
 
-    } else if (!strcmp(command, "quit")) {
-      break;
-
     } else if (!strcmp(command, "result")) {
-
-    } else if (!strcmp(command, "setboard")) {
-      fen_to_board(s + strlen("setboard "), &b); // skip the space as well
-
-    } else if (!strcmp(command, "time")) {
-      g_time = atoi(get_token(NULL));
-
-    } else if (!strncmp(s, "usermove ", 5)) {
-      // TODO: Warn xboard of illegal moves
-      int error = execute_move(get_token(NULL), &b);
-      if (!error && !g_force)
-        play_best_move(allocate_time());
-
-    } else if (!strcmp(command, "variant")) {
-      if (strcmp(get_token(NULL), "suicide"))
-        fatal("Nilatac only plays suicide");
 
     } else if (!strcmp(command, "xboard")) {
       info("Driven by xboard");
@@ -133,7 +196,7 @@ int main(void) {
       // These commands will be silently ignored to produce less garbage
 
     } else {
-      info((string)"Ignoring command " + command);
+      fatal((string)"Ignoring command " + command);
     }
   }
 
