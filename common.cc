@@ -44,7 +44,6 @@ string g_oppname = "";
 int g_reversible = 0;    // number of reversible half-moves
 bool g_offered_draw = false;
 bool g_winning_line_found = false;
-bool g_playing = false;
 
 const tmove INVALID_MOVE = { -1, -1, -1, -1 };
 const char piecename[8] = " PNBRQK";
@@ -163,7 +162,7 @@ void fen_to_board(char* s, tboard *b) {
   // space junk
   if (*(s++) != ' ') {
     cerr << "Bad FEN10\n"; return;
-  }  
+  }
   recompute_zobrist(b);
 }
 
@@ -257,7 +256,7 @@ void sort_by_pns_ratio(tmovelist* m, int* proof, int* disproof,
     double raux = ratio[i]; ratio[i] = ratio[k]; ratio[k] = raux;
     int paux = proof[i]; proof[i] = proof[k]; proof[k] = paux;
     int daux = disproof[i]; disproof[i] = disproof[k]; disproof[k] = daux;
-  }  
+  }
 }
 
 u64 rand64(void) {
@@ -449,7 +448,7 @@ void move(tboard *b, tmove mv) {
   else if (mv.prom == -BISHOP)
     b->bbishop[bishop_parity(mv.to)]++;
 
-  // If this is a capture, remove the old piece  
+  // If this is a capture, remove the old piece
   if (b->b[mv.to]) {
     b->hashValue ^= zobrist.z[b->b[mv.to] + KING][mv.to];
     if (b->side == WHITE) b->blackcount--; else b->whitecount--;
@@ -519,7 +518,7 @@ void legalpawn(tboard* b, tmovelist* m, tmove* mv) {
 void getallvalidmoves(tboard* b, tmovelist *m) {
   tmove mv = { 0, 0, 0, NO_EP_SQUARE };
   int no_captures = 1;
-  
+
   m->count = 0;
   char* board_end = b->b + 64;
   for (char* sq = b->b; sq != board_end; sq++) {
@@ -554,7 +553,7 @@ void getallvalidmoves(tboard* b, tmovelist *m) {
         }
         mv.to--;
       }
-      
+
       if (b->epsquare != NO_EP_SQUARE &&
           abs(mv.from - b->epsquare) == 1 &&
           rank(mv.from) == rank(b->epsquare)) {
@@ -696,11 +695,6 @@ void string_to_movelist(char* s, tmovelist* ml) {
 
 void signalHandler (int sig) {
   timer_expired = 1;
-  if (!g_playing) {
-    puts("tellics withdraw");
-    puts("tellics resume");
-    set_alarm(KEEP_ALIVE * 100);
-  }
 }
 
 void set_alarm(int centis) {

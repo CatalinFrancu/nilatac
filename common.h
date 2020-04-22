@@ -38,9 +38,6 @@ using namespace std;
 #define WEAKENED    0
 #endif
 
-// How often, in seconds, to send keep alive packets while not playing
-#define KEEP_ALIVE  300
-
 // Command-line arguments.
 extern string FLAGS_command;
 extern char*  FLAGS_movelist;
@@ -59,7 +56,6 @@ extern string g_oppname;
 extern int g_reversible;
 extern bool g_offered_draw;
 extern bool g_winning_line_found;
-extern bool g_playing;
 
 enum { EMPTY = 0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 

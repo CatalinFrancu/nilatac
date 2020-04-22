@@ -54,7 +54,6 @@ int main(void) {
   init_common();
   init();
   restart();
-  set_alarm(KEEP_ALIVE * 100);
 
   while (fgets(s, 100, stdin)) {
     s[strlen(s) - 1] = '\0';
@@ -94,7 +93,6 @@ int main(void) {
       if (g_oppname != old_oppname)
         printf("tellall Hello %s! This is a *suicide* game. If you don't want "
                "to play suicide, type \"abort\" now.\n", g_oppname.c_str());
-      g_playing = true;
 
     } else if (!strcmp(command, "new")) {
       restart();
@@ -109,8 +107,6 @@ int main(void) {
       break;
 
     } else if (!strcmp(command, "result")) {
-      g_playing = false;
-      set_alarm(KEEP_ALIVE * 100);
 
     } else if (!strcmp(command, "setboard")) {
       fen_to_board(s + strlen("setboard "), &b); // skip the space as well
