@@ -31,16 +31,16 @@ inline char* get_token(char* s) {
 
 /**
  * Calculates how much time we can afford to think given our remaining time
- * and the opponent's remaining time. All values are in centis.
+ * and increment and the opponent's remaining time. All values are in centis.
  */
-int allocate_time(int my_time, int opp_time) {
+int allocate_time(int my_time, int my_inc, int opp_time) {
   // If I have under 5 seconds left, or I am more than 3 seconds behind the
   // opponent with less than 20 seconds left, move quickly.
   if (my_time < 500 ||
       (my_time <= 2000 && (my_time < opp_time - 300)))
     return 10; // 0.1 seconds
 
-  return my_time / 15 + g_increment * 2 / 3;
+  return my_time / 15 + my_inc * 2 / 3;
 }
 
 void parse_option(char* name, char* value) {
@@ -100,7 +100,7 @@ void set_position(tboard* b) {
 
 void parse_go(tboard* b) {
   char* cmd;
-  int my_time = 0, opp_time = 0; // in millis
+  int my_time = 0, my_inc = 0, opp_time = 0; // in millis
 
   while ((cmd = strtok(NULL, " ")) != NULL) {
     if (!strcmp(cmd, "wtime") || !strcmp(cmd, "btime")) {
@@ -109,14 +109,23 @@ void parse_go(tboard* b) {
       } else {
         opp_time = atoi(strtok(NULL, " "));
       }
-    } else if (!strcmp(cmd, "movestogo")) {
+    } else if (!strcmp(cmd, "winc") || !strcmp(cmd, "binc")) {
+      if ((b->side == WHITE) ^ !strcmp(cmd, "binc")) {
+        my_inc = atoi(strtok(NULL, " "));
+      } else {
+        // ignore opponent's increment
+        strtok(NULL, " ");
+      }
+    } else if (!strcmp(cmd, "movestogo") ||
+               !strcmp(cmd, "movetime")) {
       strtok(NULL, " "); // ignore one argument
     } else {
       fatal((string)"Unknown go command [" + cmd + "]");
     }
   }
 
-  int centis = allocate_time(my_time / 10, opp_time / 10); // convert to centis
+  // convert args to centis
+  int centis = allocate_time(my_time / 10, my_inc / 10, opp_time / 10);
   info((string)"[NILATAC] Thinking for " + to_string(centis) + " centis");
 
   tmove mv = find_best_move(b, centis);
@@ -151,8 +160,9 @@ int main(void) {
     } else if (!strcmp(command, "setoption")) {
       parse_option(name, value);
       if (!strcasecmp(name, "UCI_Variant")) {
-        if (strcasecmp(value, "suicide")) {
-          fatal("Nilatac only plays suicide");
+        if (strcasecmp(value, "suicide") &&
+            strcasecmp(value, "giveaway")) {
+          fatal("Nilatac only plays suicide/giveaway");
         }
       } else {
         // ignore other options
@@ -169,11 +179,6 @@ int main(void) {
 
     } else if (!strcmp(command, "quit")) {
       break;
-
-    } else if (!strcmp(command, "level")) {
-      // We are only interested in the third argument, the increment
-      get_token(NULL); get_token(NULL);
-      g_increment = 100 * atoi(get_token(NULL));
 
     } else if (!strcmp(command, "name")) {
       string old_oppname = g_oppname;

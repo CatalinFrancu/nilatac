@@ -48,7 +48,6 @@ extern bool   FLAGS_by_ratio;
 extern int    FLAGS_save_every;
 
 // Global variables, mostly for zippy
-extern int g_increment; // in centiseconds
 extern string g_oppname;
 extern bool g_winning_line_found;
 
