@@ -18,9 +18,8 @@
  **/
 #ifndef _PNS_H
 #define _PNS_H
-#include <ext/hash_map>
-using namespace __gnu_cxx;
 #include "common.h"
+#include <unordered_map>
 #define INF_NODES 1000000000
 
 // Hard-coded limit of the PNS tree size
@@ -94,21 +93,7 @@ int losing_move(tboard *b, tmove mv);
 extern void getallvalidmoves(tboard* b, tmovelist* m);
 extern void move(tboard* b, tmove* mv);
 
-//Book-related functions
-// Use these to hash u64's
-struct eq_u64 {
-  bool operator()(const u64 u1, const u64 u2) const {
-    return u1 == u2;
-  }
-};
-
-struct hash_u64 {
-  size_t operator()(const u64 u) const {
-    return u;
-  }
-};
-
-typedef hash_map<u64, t_pns_node*, hash_u64, eq_u64> t_pns_hash;
+typedef unordered_map<u64, t_pns_node*> t_pns_hash;
 extern t_pns_hash* pns_hash;
 void load_pns_tree(const char* filename, t_pns_data* data);
 t_pns_hash* populate_hash(t_pns_node* root);
