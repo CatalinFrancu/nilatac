@@ -45,11 +45,11 @@ t_pns_data* alloc_pns_data(int max_nodes) {
   return data;
 }
 
-void init_pns() {
+void init_pns(const char* book_file_name) {
   pns_space = alloc_pns_data(PNS_SIZE);
   if (USE_BOOK && !WEAKENED) {
     book = alloc_pns_data(PNS_BOOKSIZE);
-    load_pns_tree(BOOK_FILENAME, book);
+    load_pns_tree(book_file_name, book);
     pns_hash = populate_hash(book->root);
   }
   else {
@@ -255,15 +255,13 @@ void save_pns_node(t_pns_node* node, FILE* f) {
 void load_pns_tree(const char* filename, t_pns_data* data) {
   FILE *f = fopen(filename, "rb");
   if (!f) {
-    tboard b;
-    fen_to_board(NEW_BOARD, &b);
-    init_pns_data(data, &b);
-  } else {
-    load_pns_node(f, data);
-    fen_to_board(NEW_BOARD, &data->b_orig);
-    fen_to_board(NEW_BOARD, &data->b_current);
-    fclose(f);
+    fatal((string)"Book file [" + filename + "] not found.");
   }
+
+  load_pns_node(f, data);
+  fen_to_board(NEW_BOARD, &data->b_orig);
+  fen_to_board(NEW_BOARD, &data->b_current);
+  fclose(f);
   cerr << "[BOOK] Initialized, " << data->size << " nodes loaded from "
        << filename << endl;
 }
@@ -800,7 +798,7 @@ int query_book(tboard *b, tmove* mv) {
         book_optimality * node->child[i]->ratio / best_ratio >= 0.2) {
       allowed[count++] = i;
       cerr << " " << move_to_san(b, node->child[i]->mv) << "("
-	   << node->child[i]->ratio << ")";
+           << node->child[i]->ratio << ")";
     }
   }
   cerr << endl;
@@ -809,9 +807,7 @@ int query_book(tboard *b, tmove* mv) {
   int i = rand() % count;
   while (node->child[allowed[i]]->size < 100 &&
          losing_move(b, node->child[allowed[i]]->mv)) {
-    cout << "tell fcatalin Move "
-         << move_to_san(b, node->child[allowed[i]]->mv)
-         << " is losing. Add it to the book!\n";
+    // TODO: this move is losing. It should be reported and added to the book.
     i = (i + 1) % count;
   }
   // Count the fact that we're playing a non-optimal move

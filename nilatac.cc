@@ -16,11 +16,13 @@
  * along with Nilatac; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
+#include <getopt.h>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
+#include "pns.h"
 #include "suicide.h"
 
 const char* SPC = " ";
@@ -126,7 +128,7 @@ void parse_go(tboard* b) {
 
   // convert args to centis
   int centis = allocate_time(my_time / 10, my_inc / 10, opp_time / 10);
-  info((string)"[NILATAC] Thinking for " + to_string(centis) + " centis");
+  info((string)"Thinking for " + to_string(centis) + " centis");
 
   tmove mv = find_best_move(b, centis);
   if (mv.from != -1) { // not stalemate
@@ -134,12 +136,30 @@ void parse_go(tboard* b) {
   }
 }
 
-int main(void) {
+int main(int argc, char* argv[]) {
 
   tboard b;
+  char* book_file_name = NULL;
+  int opt = 0;
+
+  static struct option long_options[] =
+    {
+     {"book", required_argument, 0,  'b' },
+     {0,      0,                 0,  0 }
+    };
+
+  while ((opt = getopt_long(argc, argv, "b:", long_options, NULL)) != -1) {
+    switch (opt) {
+      case 'b':
+        book_file_name = strdup(optarg);
+        break;
+      default:
+        fatal((string)"Usage: " + argv[0] + " [-b|--book book_file_name]");
+    }
+  }
 
   init_common();
-  init();
+  init(book_file_name ? book_file_name : BOOK_FILENAME);
   restart();
 
   setbuf(stdout, NULL);

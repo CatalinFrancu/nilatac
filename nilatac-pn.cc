@@ -21,9 +21,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include "egtb.h"
 #include "pns.h"
 #include "suicide.h"
-#include "egtb.h"
 #include "webserver.h"
 
 // displays usage info and exits
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
   parse_command_line(argc, argv);
 
   init_common();
-  init();
+  init(BOOK_FILENAME);
 
   if (FLAGS_command == "analyze") {
     tmovelist ml;

@@ -68,7 +68,7 @@ extern t_pns_data* book;
 extern double book_optimality;
 
 t_pns_data* alloc_pns_data(int max_nodes);
-void init_pns();
+void init_pns(const char* book_file_name);
 
 // Evaluate this node using Proof-Number Search
 // Args:

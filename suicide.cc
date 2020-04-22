@@ -46,9 +46,9 @@ void restart(void) {
   g_winning_line_found = false;
 }
 
-void init(void) {
+void init(const char* book_file_name) {
   init_hash();
-  init_pns();
+  init_pns(book_file_name);
 
   if (USE_EGTB && !WEAKENED) {
     init_egtb();
@@ -59,27 +59,27 @@ void kibitz(int kib, const char* reason) {
   switch (kib) {
     case KIB_WIN:
       if (kibitzed != KIB_WIN) {
-        cout << "kibitz " << reason << endl;
+        // cout << "kibitz " << reason << endl;
         g_winning_line_found = true;
       }
       break;
     case KIB_DRAW:
       if (kibitzed == KIB_WIN) {
-        cout << "kibitz You have probably found a bug in me. I should have won "
-             << "this game and I missed it. Lucky you!\n";
+        // cout << "kibitz You have probably found a bug in me. I should have won "
+        //      << "this game and I missed it. Lucky you!\n";
       }
       if (kibitzed != KIB_DRAW) {
-        cout << "kibitz " << reason << endl;
+        // cout << "kibitz " << reason << endl;
       }
       break;
     case KIB_LOSS:
       if (kibitzed == KIB_WIN || kibitzed == KIB_DRAW) {
-        cout << "kibitz You have probably found a bug in me. I should have won "
-             << "this game and I missed it. Lucky you!\n";
-        cout << "resign\n";
+        // cout << "kibitz You have probably found a bug in me. I should have won "
+        //      << "this game and I missed it. Lucky you!\n";
       }
-      if (kibitzed != KIB_LOSS)
-        cout << "kibitz " << reason << endl;
+      if (kibitzed != KIB_LOSS)  {
+        // cout << "kibitz " << reason << endl;
+      }
       break;
     default: assert(0);
   }

@@ -698,7 +698,7 @@ void signalHandler (int sig) {
 void set_alarm(int centis) {
   timer_expired = 0;
   itimerval value = { { 0, 0 }, { centis / 100, (centis % 100) * 10000 } };
-  cerr << "[NILATAC] Alarm set at " << centis << " centis\n";
+  info((string)"Alarm set at " + to_string(centis) + " centis");
   setitimer(ITIMER_REAL, &value, NULL);
 }
 
