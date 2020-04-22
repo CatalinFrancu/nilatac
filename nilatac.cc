@@ -59,21 +59,21 @@ int main(void) {
   while (fgets(s, 100, stdin)) {
     s[strlen(s) - 1] = '\0';
     char* command = get_token(s);
-    
+
     if (!strcmp(command, "draw")) {
       // Accept draw (a) if we offered one, (b) if 7 moves have passed, but
       // unless (c) we have found a win
       if ((g_offered_draw || g_reversible >= 14) && !g_winning_line_found) {
-	printf("tellall Agreed, %s!\n", g_oppname.c_str());
-	printf("offer draw");
+        printf("tellall Agreed, %s!\n", g_oppname.c_str());
+        printf("offer draw");
       } else if (g_winning_line_found) {
-	puts("tellall Nice try, but I already have a winning line");
-	puts("tellics decline");
+        puts("tellall Nice try, but I already have a winning line");
+        puts("tellics decline");
       } else { // g_reversible < 14 && !g_offered_draw
-	printf("tellall Sorry %s, but I only accept draws after 7 "
+        printf("tellall Sorry %s, but I only accept draws after 7 "
                "reversible moves (no captures, no pawn pushes)\n",
                g_oppname.c_str());
-	puts("tellics decline");
+        puts("tellics decline");
       }
 
     } else if (!strcmp(command, "force")) {
@@ -92,8 +92,8 @@ int main(void) {
       string old_oppname = g_oppname;
       g_oppname = get_token(NULL);
       if (g_oppname != old_oppname)
-	printf("tellall Hello %s! This is a *suicide* game. If you don't want "
-	       "to play suicide, type \"abort\" now.\n", g_oppname.c_str());
+        printf("tellall Hello %s! This is a *suicide* game. If you don't want "
+               "to play suicide, type \"abort\" now.\n", g_oppname.c_str());
       g_playing = true;
 
     } else if (!strcmp(command, "new")) {
@@ -122,18 +122,18 @@ int main(void) {
       // TODO: Warn xboard of illegal moves
       int error = execute_move(get_token(NULL), &b);
       if (!error && !g_force)
-	play_best_move(allocate_time());
+        play_best_move(allocate_time());
 
     } else if (!strcmp(command, "variant")) {
       if (strcmp(get_token(NULL), "suicide"))
-	fatal("Nilatac only plays suicide");
+        fatal("Nilatac only plays suicide");
 
     } else if (!strcmp(command, "xboard")) {
       info("Driven by xboard");
 
     } else if (!strcmp(command, "accepted") ||
-	       !strcmp(command, "hard") ||
-	       !strcmp(command, "random")) {
+               !strcmp(command, "hard") ||
+               !strcmp(command, "random")) {
       // These commands will be silently ignored to produce less garbage
 
     } else {

@@ -63,7 +63,7 @@ bin/webserver.o: webserver.cc webserver.h
 	g++ $(CC_OPT) -c -o bin/webserver.o webserver.cc
 
 unzip:
-	gunzip -k book.in.gz
+	test -e book.in || gunzip -k book.in.gz
 
 bin:
 	mkdir -p bin
