@@ -69,8 +69,8 @@ enum { EMPTY = 0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };
 #define MINDEPTH 4
 #define MAXDEPTH 100
 
-#define NEW_BOARD "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-#define EMPTY_BOARD "8/8/8/8/8/8/8/8 w - - 0 1"
+extern const char* NEW_BOARD;
+extern const char* EMPTY_BOARD;
 #define z(a) ((b->side == 1) ? (a) : (-(a)))
 
 // Bit-twiddling functions. Squares are 0-63, ranks and files are 0-7
@@ -126,7 +126,7 @@ extern int timer_expired;
 void info(string s);
 void fatal(string s);
 string board_to_string(tboard* b);
-void fen_to_board(char* s, tboard* b);
+void fen_to_board(const char* s, tboard* b);
 void printboard(tboard* b);
 int same_move(tmove m1, tmove m2);
 void printmovelist(tmovelist m);

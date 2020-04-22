@@ -22,7 +22,7 @@
 #define WS_OK 0
 #define WS_BAD_MOVELIST 1
 
-void start_server(int port);
-void start_server_thread(int port);
+void start_server(long long port);
+void start_server_thread(long long port);
 
 #endif /* _WEBSERVER_H */

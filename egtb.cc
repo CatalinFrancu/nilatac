@@ -51,32 +51,32 @@ unsigned int_to_comb3[41664][3];
 unsigned int_to_comb_pp2[2016][2];
 unsigned int_to_comb_pp3[41664][3];
 
-#define comb_to_int(x, size, pawns) \
-          (((size) == 1) \
-              ? ((pawns) ? ((x)[0] - 8) : (x)[0]) \
-              : (((size) == 2) ? ((pawns) \
-                                    ? comb_to_int_pp2[(x)[0]][(x)[1]] \
-                                    : comb_to_int2[(x)[0]][(x)[1]]) \
-                               : ((pawns) \
-                                    ? comb_to_int_pp3[(x)[0]][(x)[1]][(x)[2]] \
-                                    : comb_to_int3[(x)[0]][(x)[1]][(x)[2]])))
+#define comb_to_int(x, size, pawns)                       \
+  (((size) == 1)                                          \
+   ? ((pawns) ? ((x)[0] - 8) : (x)[0])                    \
+   : (((size) == 2) ? ((pawns)                            \
+                       ? comb_to_int_pp2[(x)[0]][(x)[1]]  \
+                       : comb_to_int2[(x)[0]][(x)[1]])    \
+      : ((pawns)                                          \
+         ? comb_to_int_pp3[(x)[0]][(x)[1]][(x)[2]]        \
+         : comb_to_int3[(x)[0]][(x)[1]][(x)[2]])))
 
-#define int_to_comb(c, x, size, pawns) \
-          if ((size) == 1) \
-            if ((pawns)) \
-              (x)[0] = (c) + 8; \
-	    else \
-              (x)[0] = (c); \
-          else if ((size) == 2) \
-            if ((pawns)) \
-              memcpy((x), int_to_comb_pp2[(c)], 8); \
-            else \
-              memcpy((x), int_to_comb2[(c)], 8); \
-          else \
-            if ((pawns)) \
-              memcpy((x), int_to_comb_pp3[(c)], 12); \
-            else \
-              memcpy((x), int_to_comb3[(c)], 12);
+#define int_to_comb(c, x, size, pawns)          \
+  if ((size) == 1)                              \
+    if ((pawns))                                \
+      (x)[0] = (c) + 8;                         \
+    else                                        \
+      (x)[0] = (c);                             \
+  else if ((size) == 2)                         \
+    if ((pawns))                                \
+      memcpy((x), int_to_comb_pp2[(c)], 8);     \
+    else                                        \
+      memcpy((x), int_to_comb2[(c)], 8);        \
+  else                                          \
+    if ((pawns))                                \
+      memcpy((x), int_to_comb_pp3[(c)], 12);    \
+    else                                        \
+      memcpy((x), int_to_comb3[(c)], 12);
 
 // Given size sorted numbers between 0 and 63, return the number of the
 // combination (0 through C(64, size) - 1)
@@ -110,18 +110,18 @@ void precompute_comb() {
   for (int i = 0; i <= 64; i++)
     for (int j = 0; j <= i; j++)
       if (j == 0 || j == i)
-	choose[i][j] = 1;
+        choose[i][j] = 1;
       else
-	choose[i][j] = choose[i-1][j] + choose[i-1][j-1];
+        choose[i][j] = choose[i-1][j] + choose[i-1][j-1];
 
   // Now precompute sum_comb also;
   for (int k = 0; k <= MEN; k++)
     for (int i = 0; i <= 64; i++)
       for (int j = i; j <= 64; j++)
-	if (j == i)
-	  sum_comb[i][j][k] = choose[j][k];
-	else
-	  sum_comb[i][j][k] = sum_comb[i][j-1][k] + choose[j][k];
+        if (j == i)
+          sum_comb[i][j][k] = choose[j][k];
+        else
+          sum_comb[i][j][k] = sum_comb[i][j-1][k] + choose[j][k];
 
   // Now precompute comb_to_int and comb_to_int_pp and viceversa
   // Only precompute for ordered combinations
@@ -136,10 +136,10 @@ void precompute_comb() {
   for (x[0] = 0; x[0] < 62; x[0]++)
     for (x[1] = x[0] + 1; x[1] < 63; x[1]++)
       for (x[2] = x[1] + 1; x[2] < 64; x[2]++) {
-	unsigned u = comb_to_int3[x[0]][x[1]][x[2]] = func_comb_to_int(x, 3);
-	int_to_comb3[u][0] = x[0];
-	int_to_comb3[u][1] = x[1];
-	int_to_comb3[u][2] = x[2];
+        unsigned u = comb_to_int3[x[0]][x[1]][x[2]] = func_comb_to_int(x, 3);
+        int_to_comb3[u][0] = x[0];
+        int_to_comb3[u][1] = x[1];
+        int_to_comb3[u][2] = x[2];
       }
 
   for (x[0] = 8; x[0] < 55; x[0]++)
@@ -152,11 +152,11 @@ void precompute_comb() {
   for (x[0] = 8; x[0] < 54; x[0]++)
     for (x[1] = x[0] + 1; x[1] < 55; x[1]++)
       for (x[2] = x[1] + 1; x[2] < 56; x[2]++) {
-	unsigned u =
-	  comb_to_int_pp3[x[0]][x[1]][x[2]] = func_comb_to_int_pp(x, 3);
-	int_to_comb_pp3[u][0] = x[0];
-	int_to_comb_pp3[u][1] = x[1];
-	int_to_comb_pp3[u][2] = x[2];
+        unsigned u =
+          comb_to_int_pp3[x[0]][x[1]][x[2]] = func_comb_to_int_pp(x, 3);
+        int_to_comb_pp3[u][0] = x[0];
+        int_to_comb_pp3[u][1] = x[1];
+        int_to_comb_pp3[u][2] = x[2];
       }
 }
 
@@ -171,15 +171,15 @@ int transform_inverse[8] = { 0, 3, 2, 1, 4, 5, 6, 7 }; // Inverse transforms
 int transform(int x, int type) {
   int r = rank(x), f = file(x);
   switch (type) {
-  case 0: return x;                      // Identity
-  case 1: return assemble(f, 7 - r);     // Rot 90 clockwise
-  case 2: return assemble(7 - r, 7 - f); // Rot 180
-  case 3: return assemble(7 - f, r);     // Rot 270
-  case 4: return assemble(r, 7 - f);     // Mirror against Oy
-  case 5: return assemble(7 - f, 7 - r); // Mirror, Rot 90 clockwise
-  case 6: return assemble(7 - r, f);     // Mirror, Rot 180
-  case 7: return assemble(f, r);         // Mirror, Rot 270
-  default: assert(0);
+    case 0: return x;                      // Identity
+    case 1: return assemble(f, 7 - r);     // Rot 90 clockwise
+    case 2: return assemble(7 - r, 7 - f); // Rot 180
+    case 3: return assemble(7 - f, r);     // Rot 270
+    case 4: return assemble(r, 7 - f);     // Mirror against Oy
+    case 5: return assemble(7 - f, 7 - r); // Mirror, Rot 90 clockwise
+    case 6: return assemble(7 - r, f);     // Mirror, Rot 180
+    case 7: return assemble(f, r);         // Mirror, Rot 270
+    default: assert(0);
   }
 }
 
@@ -190,8 +190,8 @@ inline void bubble_sort(int* x, int size) {
     changed = 0;
     for (int i = 0; i < size - 1; i++)
       if (x[i] > x[i+1]) {
-	int t = x[i]; x[i] = x[i+1]; x[i+1] = t;
-	changed = 1;
+        int t = x[i]; x[i] = x[i+1]; x[i+1] = t;
+        changed = 1;
       }
   } while (changed);
 }
@@ -290,8 +290,8 @@ void init_canonic(t_canonic_info* canonic, int size) {
       transform_combo(y, size, j); // Apply transform j
       int new_i = comb_to_int(y, size, 0);
       if (new_i < i && canonic->data_np[new_i] >= 0) {
-	found = 1;
-	canonic->data_np[i] = -j; // Remember the transform
+        found = 1;
+        canonic->data_np[i] = -j; // Remember the transform
       }
       j++;
     }
@@ -355,18 +355,18 @@ void backtrack(int men, int level) {
 
     for (int i = 0; i < 12; i++)
       if (val[i]) {
-	if (first) {
-	  total = any_pawns
-	    ? ((i == 5 || i == 11) ? canonic[val[i]].num_canonics_pp
-	       : canonic[val[i]].num_canonics_p)
-	    : canonic[val[i]].num_canonics_np;
-	  first = 0;
-	} else {
-	  if (i == 5 || i == 11) // pawns
-	    total *= choose[48][val[i]];
-	  else
-	    total *= choose[64][val[i]];
-	}
+        if (first) {
+          total = any_pawns
+            ? ((i == 5 || i == 11) ? canonic[val[i]].num_canonics_pp
+               : canonic[val[i]].num_canonics_p)
+            : canonic[val[i]].num_canonics_np;
+          first = 0;
+        } else {
+          if (i == 5 || i == 11) // pawns
+            total *= choose[48][val[i]];
+          else
+            total *= choose[64][val[i]];
+        }
       }
 
     int p[4] = { 12, 12, 12, 12 }; // get the piece types
@@ -374,7 +374,7 @@ void backtrack(int men, int level) {
     int k = 0;
     for (int i = 0; i < 12; i++)
       for (int j = 1; j <= val[i]; j++)
-	p[k++] = i;
+        p[k++] = i;
 
     egtb_start[p[0]][p[1]][p[2]][p[3]] = egtb_file_size;
     egtb_end[p[0]][p[1]][p[2]][p[3]] = egtb_file_size + total;
@@ -427,9 +427,9 @@ void clear_egtb_files() {
   //   int desc = open(EGTB_FILENAME, O_RDWR);
   //   FILE* f = fdopen(desc, "wt");
   //   char buf[1 << 16];
-  
+
   //   memset(buf, EGTB_UNKNOWN, sizeof(buf));
-  
+
   //   for (unsigned i = 0; i < egtb_file_size / sizeof(buf); i++)
   //     assert(fwrite(buf, sizeof(buf), 1, f) == 1);
   //   assert(fwrite(buf, egtb_file_size % sizeof(buf), 1, f) == 1);
@@ -464,7 +464,7 @@ unsigned char* edges = NULL;
 int num_edges;
 char list_size[MAX_NODES];
 char old_score[MAX_NODES]; // Some nodes have no children
-unsigned int start1, start2, size1, size2;
+unsigned start1, start2, size1, size2;
 
 void int_list_init(int index1, int index2) {
   start1 = index_to_pieceset[index1].start;
@@ -518,8 +518,8 @@ inline void set_edge(unsigned x) {
 // Trivial configurations (no descendants) should be stored as
 // 4,000,000,000 + score
 inline void int_list_add(unsigned k, unsigned x) {
-  assert(k >= start1 && k < start1 + size1 ||
-	 k >= start2 && k < start2 + size2);
+  assert((k >= start1 && k < start1 + size1) ||
+         (k >= start2 && k < start2 + size2));
   int place = (k >= start1 && k < start1 + size1)
     ? k - start1
     : size1 + (k - start2);
@@ -540,7 +540,7 @@ inline void int_list_add(unsigned k, unsigned x) {
 
 #define index_convert(x) (((x) > 0) ? (6 - (x)) : ((x) + 12))
 int index_revert[12] = { KING, QUEEN, ROOK, BISHOP, KNIGHT, PAWN,
-			 -KING, -QUEEN, -ROOK, -BISHOP, -KNIGHT, -PAWN };
+                         -KING, -QUEEN, -ROOK, -BISHOP, -KNIGHT, -PAWN };
 
 // From board b, constructs
 // - a sorted array (in the order above) with the 4 pieces, including empty
@@ -564,10 +564,10 @@ void egtb_build_vectors(tboard* b, int* index, int* position, int* any_pawns) {
     changed = 0;
     for (int i = 0; i < num_pieces - 1; i++)
       if (index[i] > index[i+1] ||
-	  (index[i] == index[i+1] && position[i] > position[i+1])) {
-	int t = index[i]; index[i] = index[i+1]; index[i+1] = t;
-	t = position[i]; position[i] = position[i+1]; position[i+1] = t;
-	changed = 1;
+          (index[i] == index[i+1] && position[i] > position[i+1])) {
+        int t = index[i]; index[i] = index[i+1]; index[i+1] = t;
+        t = position[i]; position[i] = position[i+1]; position[i+1] = t;
+        changed = 1;
       }
   } while (changed);
 }
@@ -580,8 +580,8 @@ void egtb_build_vectors(tboard* b, int* index, int* position, int* any_pawns) {
 // index_canonic: the index of b2 within this array of categories
 // if transform > 0, it CLOBBERS position!
 void transform_to_canonic(tboard *b1, tboard *b2, int* position,
-			  int size, int any_pawns, int* transform_applied,
-			  unsigned* num_canonics, unsigned* index_canonic) {
+                          int size, int any_pawns, int* transform_applied,
+                          unsigned* num_canonics, unsigned* index_canonic) {
   *transform_applied = 0;
   if (abs(b1->b[position[0]]) == PAWN) {
     // Index by pawns
@@ -626,7 +626,7 @@ void transform_to_canonic(tboard *b1, tboard *b2, int* position,
 // Restrict the interval start-end to a chunk thereof, based on the combination
 // given by position[lo]..position[lo+size-1]
 inline void egtb_narrow_interval(int piece, int* position, int lo, int size,
-				 unsigned* start, unsigned* end) {
+                                 unsigned* start, unsigned* end) {
   unsigned my_index, num_chunks;
   if (piece == 5 || piece == 11) {
     my_index = comb_to_int(position + lo, size, 1);
@@ -664,7 +664,7 @@ unsigned egtb_get_index(tboard* b) {
   unsigned num_canonic_combos, my_index;
   int transform_applied;
   transform_to_canonic(b, &b_canonic, position, num_indexed_pieces, any_pawns,
-		       &transform_applied, &num_canonic_combos, &my_index);
+                       &transform_applied, &num_canonic_combos, &my_index);
 
   if (transform_applied > 0)
     egtb_build_vectors(&b_canonic, piece, position, &any_pawns);
@@ -681,7 +681,7 @@ unsigned egtb_get_index(tboard* b) {
     int k = j + 1;
     while (k < MEN && piece[k] == piece[j]) k++;
     egtb_narrow_interval(piece[j], position, j, k - j, &start, &end);
-    j = k;    
+    j = k;
   }
 
   return start;
@@ -741,19 +741,15 @@ int place_pieces(tboard* b, int piece_type, int* coords, int size) {
 // pieces correctly. Returns 1 if there was a conflict (which means
 // this index is invalid), 0 otherwise
 int egtb_get_position(tboard* b, int map_index, int noncanonic_index,
-		      unsigned index_rest, unsigned size_rest) {
+                      unsigned index_rest, unsigned size_rest) {
   fen_to_board(EMPTY_BOARD, b);
   char* pieces = index_to_pieceset[map_index].p;
   int set_size = 1;
   while (pieces[set_size] == pieces[0]) set_size++;
-  int any_pawns = 0;
-  for (int i = 0; i < 4; i++)
-    if (pieces[i] == 5 || pieces[i] == 11)
-      any_pawns = 1;
 
   int position[MEN];
   int_to_comb(noncanonic_index, position, set_size,
-	      (pieces[0] == 5 || pieces[0] == 11));
+              (pieces[0] == 5 || pieces[0] == 11));
 
   // Place the first set of pieces
   assert(!place_pieces(b, pieces[0], position, set_size));
@@ -777,7 +773,7 @@ int egtb_get_position(tboard* b, int map_index, int noncanonic_index,
 
     start += my_chunk * chunk_size;
     end = start + chunk_size;
-    j = k;    
+    j = k;
   }
 
   assert(start + 1 == end);
@@ -814,7 +810,7 @@ int complement_map_index(int map_index) {
 
   i = 0;
   while (pieces[i] <= 5)
-    pieces2[j++] = pieces[i++] + 6; // Copy my pieces  
+    pieces2[j++] = pieces[i++] + 6; // Copy my pieces
 
   while (j < MEN) pieces2[j++] = 12; // Fill up the vector
 
@@ -869,9 +865,9 @@ void egtb_compute_graph(int map_index) {
     data = canonic[set_size].data_np;
   }
   unsigned chunk_size = (index_to_pieceset[map_index + 1].start -
-			 index_to_pieceset[map_index].start) / num_chunks;
+                         index_to_pieceset[map_index].start) / num_chunks;
   assert(chunk_size * num_chunks == index_to_pieceset[map_index + 1].start -
-	 index_to_pieceset[map_index].start);
+         index_to_pieceset[map_index].start);
 
   int noncanonic_index = -1;
   cerr << num_chunks << " chunks:";
@@ -882,9 +878,9 @@ void egtb_compute_graph(int map_index) {
     for (unsigned j = 0; j < chunk_size; j++) {
       tboard b;
       if (!egtb_get_position(&b, map_index, noncanonic_index, j,
-			     chunk_size))
-	egtb_compute_graph_node(&b, index_to_pieceset[map_index].start + 
-				i * chunk_size + j);
+                             chunk_size))
+        egtb_compute_graph_node(&b, index_to_pieceset[map_index].start +
+                                i * chunk_size + j);
     }
   }
   cerr << endl;
@@ -900,47 +896,47 @@ void egtb_loop() {
       int shortest_win = 1000, longest_loss = -1;
 
       for (int l = 0; l < list_size[i]; l++) {
-	unsigned child = get_edge();
-	if (child + 200 > 16000000)
-	  // This node is final;
-	  child_score = child - 16000000;
-	else
-	  child_score = old_score[child];
-	assert(child_score >= -128 && child_score < 128) ;
+        unsigned child = get_edge();
+        if (child + 200 > 16000000)
+          // This node is final;
+          child_score = child - 16000000;
+        else
+          child_score = old_score[child];
+        assert(child_score >= -128 && child_score < 128) ;
 
-	if (child_score == EGTB_UNKNOWN)
-	  unknown++;
-	else if (child_score == EGTB_DRAW)
-	  drawn++;
-	else if (child_score >= 0) { // opponent is winning this one
-	  lost++;
-	  if (child_score > longest_loss) longest_loss = child_score;
-	} else { // opponent is losing this one
-	  won++;
-	  child_score = -child_score - 1;
-	  if (child_score < shortest_win) shortest_win = child_score;
-	}
+        if (child_score == EGTB_UNKNOWN)
+          unknown++;
+        else if (child_score == EGTB_DRAW)
+          drawn++;
+        else if (child_score >= 0) { // opponent is winning this one
+          lost++;
+          if (child_score > longest_loss) longest_loss = child_score;
+        } else { // opponent is losing this one
+          won++;
+          child_score = -child_score - 1;
+          if (child_score < shortest_win) shortest_win = child_score;
+        }
       }
 
       int new_score;
       if (won)
-	new_score = (shortest_win < 124)
-	  ? (shortest_win + 1)
-	  : EGTB_DRAW;
+        new_score = (shortest_win < 124)
+          ? (shortest_win + 1)
+          : EGTB_DRAW;
       else if (!unknown && ! drawn && !won) // All lost, all lost
-	new_score = (longest_loss >= 124)
-	  ? EGTB_DRAW
-	  : (-longest_loss - 2);
+        new_score = (longest_loss >= 124)
+          ? EGTB_DRAW
+          : (-longest_loss - 2);
       else if (!unknown)
-	new_score = EGTB_DRAW;
+        new_score = EGTB_DRAW;
       else
-	new_score = EGTB_UNKNOWN;
+        new_score = EGTB_UNKNOWN;
 
       if (new_score != old) {
-	old_score[i] = new_score;
-	if (abs(new_score - old) > max_update)
-	  max_update = abs(new_score - old);
-	solved_count++;
+        old_score[i] = new_score;
+        if (abs(new_score - old) > max_update)
+          max_update = abs(new_score - old);
+        solved_count++;
       }
     }
   }
@@ -972,8 +968,8 @@ void solve_configuration(int map_index) {
     board_count = solved_count = max_update = 0;
     egtb_loop();
     cerr << "Iteration " << iteration << " done. "
-	 << "Solved " << solved_count
-	 << ", max improvement " << max_update << endl;
+         << "Solved " << solved_count
+         << ", max improvement " << max_update << endl;
   } while (solved_count && iteration < 124);
   int_list_clear();
 
@@ -994,27 +990,27 @@ void egtb_create(int min_config, int max_config) {
   for (int size = 2; size <= MEN; size++)
     for (int allow_pawns = 0; allow_pawns <= size; allow_pawns++)
       for (int map_index = 0; map_index < index_to_pieceset_size;
-	   map_index++) {
-	// First, make sure that this configuration does have size pieces and
-	// has the requested number of pawns
-	char* pieces = index_to_pieceset[map_index].p;
-	int piece_count = 0;
-	int has_pawns = 0;
-	for (piece_count = 0;
-	     piece_count < MEN && pieces[piece_count] != 12;
-	     piece_count++) {
-	  if (pieces[piece_count] == 5 || pieces[piece_count] == 11)
-	    has_pawns++;
-	}
-	if (piece_count == size && has_pawns == allow_pawns) {
-	  if (config >= min_config) {
-	    // Yes, we can solve this configuration
-	    cerr << "Configuration " << config << " ----------------\n";
-	    solve_configuration(map_index);
-	  }
-	  if (++config == max_config)
-	    return;
-	}
+           map_index++) {
+        // First, make sure that this configuration does have size pieces and
+        // has the requested number of pawns
+        char* pieces = index_to_pieceset[map_index].p;
+        int piece_count = 0;
+        int has_pawns = 0;
+        for (piece_count = 0;
+             piece_count < MEN && pieces[piece_count] != 12;
+             piece_count++) {
+          if (pieces[piece_count] == 5 || pieces[piece_count] == 11)
+            has_pawns++;
+        }
+        if (piece_count == size && has_pawns == allow_pawns) {
+          if (config >= min_config) {
+            // Yes, we can solve this configuration
+            cerr << "Configuration " << config << " ----------------\n";
+            solve_configuration(map_index);
+          }
+          if (++config == max_config)
+            return;
+        }
       }
 }
 
@@ -1025,24 +1021,24 @@ int string_to_config(string piecenames) {
   for (int size = 2; size <= MEN; size++)
     for (int allow_pawns = 0; allow_pawns <= size; allow_pawns++)
       for (int map_index = 0; map_index < index_to_pieceset_size;
-	   map_index++) {
-	// First, make sure that this configuration does have size pieces and
-	// has the requested number of pawns
-	char* pieces = index_to_pieceset[map_index].p;
-	int piece_count = 0;
-	int has_pawns = 0;
-	for (piece_count = 0;
-	     piece_count < MEN && pieces[piece_count] != 12;
-	     piece_count++) {
-	  if (pieces[piece_count] == 5 || pieces[piece_count] == 11)
-	    has_pawns++;
-	}
-	if (piece_count == size && has_pawns == allow_pawns) {
-	  if (config_to_string(index_to_pieceset[map_index].p) == piecenames)
-	    return config;
-	  if (++config == index_to_pieceset_size)
-	    return -1;
-	}
+           map_index++) {
+        // First, make sure that this configuration does have size pieces and
+        // has the requested number of pawns
+        char* pieces = index_to_pieceset[map_index].p;
+        int piece_count = 0;
+        int has_pawns = 0;
+        for (piece_count = 0;
+             piece_count < MEN && pieces[piece_count] != 12;
+             piece_count++) {
+          if (pieces[piece_count] == 5 || pieces[piece_count] == 11)
+            has_pawns++;
+        }
+        if (piece_count == size && has_pawns == allow_pawns) {
+          if (config_to_string(index_to_pieceset[map_index].p) == piecenames)
+            return config;
+          if (++config == index_to_pieceset_size)
+            return -1;
+        }
       }
   return -1;
 }

@@ -31,7 +31,7 @@
 #include "pns.h"
 
 void* handle_connection(void* fd_ptr) {
-  int fd = (long long int)fd_ptr;
+  int fd = (long long)fd_ptr;
   FILE *f_in = fdopen(fd, "r+t");
   FILE *f_out = fdopen(fd, "wt");
   char s[100];
@@ -78,7 +78,7 @@ void* handle_connection(void* fd_ptr) {
   return NULL;
 }
 
-void start_server(int port) {
+void start_server(long long port) {
   struct sockaddr_in sin;
   memset(&sin, 0, sizeof(sin));
   sin.sin_family = AF_INET;
@@ -95,7 +95,7 @@ void start_server(int port) {
   cerr << "[WEB] Started server on port " << port << endl;
 
   while (1) {
-    int conn = accept(sock, NULL, NULL);
+    long long conn = accept(sock, NULL, NULL);
     assert(conn != -1);
     pthread_t* thread = new pthread_t;
     pthread_create(thread, NULL, handle_connection, (void*)conn);
@@ -105,14 +105,14 @@ void start_server(int port) {
 }
 
 void* start_server_thread_helper(void* port) {
-  start_server((long long int)port);
+  start_server((long long)port);
   return NULL;
 }
 
 /* Start the webserver in a different thread, so that we can research
  * the book and while running the webserver
  */
-void start_server_thread(int port) {
+void start_server_thread(long long port) {
   pthread_t* thread = new pthread_t;
   pthread_create(thread, NULL, start_server_thread_helper, (void*)port);
 }

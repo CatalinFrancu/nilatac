@@ -32,10 +32,10 @@ int positions; // The number of positions evaluated
 int kibitzed; // What have we kibitzed most recently?
 
 typedef enum {
-  KIB_NONE = 0,
-  KIB_WIN,
-  KIB_DRAW,
-  KIB_LOSS,
+              KIB_NONE = 0,
+              KIB_WIN,
+              KIB_DRAW,
+              KIB_LOSS,
 } kib_reason;
 
 void restart(void) {
@@ -60,43 +60,43 @@ void init(void) {
 
 void kibitz(int kib, const char* reason) {
   switch (kib) {
-  case KIB_WIN:
-    if (kibitzed == KIB_LOSS)
-      cout << "kibitz You could have won this!\n";
-    if (kibitzed == KIB_DRAW)
-      cout << "kibitz You could have drawn this!\n";
-    if (kibitzed != KIB_WIN) {
+    case KIB_WIN:
+      if (kibitzed == KIB_LOSS)
+        cout << "kibitz You could have won this!\n";
+      if (kibitzed == KIB_DRAW)
+        cout << "kibitz You could have drawn this!\n";
+      if (kibitzed != KIB_WIN) {
+        cout << "kibitz " << reason << endl;
+        g_winning_line_found = true;
+      }
+      break;
+    case KIB_DRAW:
+      if (kibitzed == KIB_WIN) {
+        cout << "kibitz You have probably found a bug in me. I should have won "
+             << "this game and I missed it. Lucky you!\n";
+        cout << "resign\n";
+      }
+      if (kibitzed == KIB_LOSS)
+        cout << "kibitz You could have won this!\n";
+      if (kibitzed != KIB_DRAW) {
+        cout << "kibitz " << reason << endl;
+        puts("offer draw");
+        g_offered_draw = true;
+      }
+      break;
+    case KIB_LOSS:
+      if (kibitzed == KIB_WIN || kibitzed == KIB_DRAW) {
+        cout << "kibitz You have probably found a bug in me. I should have won "
+             << "this game and I missed it. Lucky you!\n";
+        cout << "resign\n";
+      }
+      if (kibitzed != KIB_LOSS)
+        cout << "kibitz " << reason << endl;
+      break;
+    case KIB_NONE:
       cout << "kibitz " << reason << endl;
-      g_winning_line_found = true;
-    }
-    break;
-  case KIB_DRAW:
-    if (kibitzed == KIB_WIN) {
-      cout << "kibitz You have probably found a bug in me. I should have won "
-           << "this game and I missed it. Lucky you!\n";
-      cout << "resign\n";
-    }
-    if (kibitzed == KIB_LOSS)
-      cout << "kibitz You could have won this!\n";
-    if (kibitzed != KIB_DRAW) {
-      cout << "kibitz " << reason << endl;
-      puts("offer draw");
-      g_offered_draw = true;
-    }
-    break;
-  case KIB_LOSS:
-    if (kibitzed == KIB_WIN || kibitzed == KIB_DRAW) {
-      cout << "kibitz You have probably found a bug in me. I should have won "
-           << "this game and I missed it. Lucky you!\n";
-      cout << "resign\n";
-    }
-    if (kibitzed != KIB_LOSS)
-      cout << "kibitz " << reason << endl;
-    break;
-  case KIB_NONE:
-    cout << "kibitz " << reason << endl;
-    break;
-  default: assert(0);
+      break;
+    default: assert(0);
   }
   kibitzed = kib;
 }
@@ -136,8 +136,8 @@ int static_eval(tboard* b) {
 
   // By how many pieces I'm ahead
   int material_diff = (b->side == WHITE)
-                      ? (b->whitecount - b->blackcount)
-                      : (b->blackcount - b->whitecount);
+    ? (b->whitecount - b->blackcount)
+    : (b->blackcount - b->whitecount);
 
   // Freak out if I'm ahead by more than 7 pieces
   if (material_diff > MATERIAL_PANIC_COUNT)
@@ -214,14 +214,14 @@ int eval_board(tboard* b, int depth, int alpha, int beta) {
   }
 
   // Move the killer move to the front
-//   if (preferredMoves < m.count)
-//     for (int i = 0; i < m.count; i++)
-//       if (!memcmp(m.move + i, killer + depth, sizeof(tmove))) {
-// 	tmove maux = m.move[preferredMoves];
-// 	m.move[preferredMoves] = m.move[i];
-// 	m.move[i] = maux;
-// 	i = m.count;
-//       }
+  //   if (preferredMoves < m.count)
+  //     for (int i = 0; i < m.count; i++)
+  //       if (!memcmp(m.move + i, killer + depth, sizeof(tmove))) {
+  // 	tmove maux = m.move[preferredMoves];
+  // 	m.move[preferredMoves] = m.move[i];
+  // 	m.move[i] = maux;
+  // 	i = m.count;
+  //       }
 
   // Recurrence
   int best_move = 0xff;
@@ -276,19 +276,19 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
     int level_score = -INFTY;
 
     for (int i = 0; i < m->count && level_score != WIN && (!timer_expired || depth == MINDEPTH);
-	 i++) {
+         i++) {
       tsaverec sr;
       saveboard(&b, m->move[i], &sr);
       move(&b, m->move[i]);
       int value = -eval_board(&b, depth, -INFTY, -level_score + 1);
       // Do not overwrite values if we timed out
       if (!timer_expired || depth == MINDEPTH) {
-	values[i] = value;
-	moves_completed = i;
-	cerr << movetostring(m->move[i]) << " -> " << values[i] << endl;
-	if (value > level_score) level_score = values[i];
+        values[i] = value;
+        moves_completed = i;
+        cerr << movetostring(m->move[i]) << " -> " << values[i] << endl;
+        if (value > level_score) level_score = values[i];
       }
-      restoreboard(&b, &sr);	
+      restoreboard(&b, &sr);
     }
 
     if (!timer_expired || depth == MINDEPTH) {
@@ -305,7 +305,7 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
 
   int bestMoveCount;
   for (bestMoveCount = 0; bestMoveCount < m->count &&
-	 values[0] == values[bestMoveCount]; bestMoveCount++);
+         values[0] == values[bestMoveCount]; bestMoveCount++);
 
   cerr << "[HASH] reads:" << hs_reads << " hits:" << hs_hits << endl;
 
@@ -319,15 +319,15 @@ tmove find_best_move_alpha_beta(tmovelist* m, int centis) {
   for (int i = 0; i < m->count; i++) {
     baux = b;
     move(&baux, m->move[i]);
-    
+
     set_alarm(centis / 6);
     t_pns_result res = pns_main(&baux, pns_space, 300000, NULL);
     cerr << "[PNS] Doublecheck: " << res.proof << "|" << res.disproof
-	 << endl;
+         << endl;
     if (res.proof) return m->move[i];
-    
+
     cerr << "[PNS] Doublecheck: avoiding " << movetostring(m->move[i])
-	 << " because " << movetostring(res.mv) << " would kill us.\n";
+         << " because " << movetostring(res.mv) << " would kill us.\n";
   }
   info("[PNS] Doublecheck: all moves lead to forced losses");
   kibitz(KIB_LOSS, "Those who are about to die salute you");
@@ -348,25 +348,25 @@ int query_egtb(tmove *mv) {
       int longest_loss = -1, longest_move = -1;
       getallvalidmoves(&b, &ml);
       if (ml.count == 0) {
-	*mv = INVALID_MOVE; return EGTB_DRAW;
+        *mv = INVALID_MOVE; return EGTB_DRAW;
       }
       for (int i = 0; i < ml.count; i++) {
-	new_b = b;
-	move(&new_b, ml.move[i]);
-	int child_score = egtb_lookup_inclusive(&new_b);
-	assert(child_score != EGTB_UNKNOWN);
-	if (child_score == EGTB_DRAW) {
-	  *mv = ml.move[i];
-	  return EGTB_DRAW;
-	}
-	if (child_score >= 0) {
-	  if (child_score > longest_loss) {
-	    longest_loss = child_score;
-	    longest_move = i;
-	  }
-	} else {
-	  assert(0); // The child cannot lose, because we are supposed to lose!
-	}
+        new_b = b;
+        move(&new_b, ml.move[i]);
+        int child_score = egtb_lookup_inclusive(&new_b);
+        assert(child_score != EGTB_UNKNOWN);
+        if (child_score == EGTB_DRAW) {
+          *mv = ml.move[i];
+          return EGTB_DRAW;
+        }
+        if (child_score >= 0) {
+          if (child_score > longest_loss) {
+            longest_loss = child_score;
+            longest_move = i;
+          }
+        } else {
+          assert(0); // The child cannot lose, because we are supposed to lose!
+        }
       }
       assert(longest_move != -1);
       *mv = ml.move[longest_move];
@@ -377,18 +377,18 @@ int query_egtb(tmove *mv) {
       // Find a move for the shortest win
       getallvalidmoves(&b, &ml);
       if (ml.count == 0) {
-	*mv = INVALID_MOVE; return EGTB_DRAW;
+        *mv = INVALID_MOVE; return EGTB_DRAW;
       }
       for (int i = 0; i < ml.count; i++) {
-	new_b = b;
-	move(&new_b, ml.move[i]);
-	int child_score = egtb_lookup_inclusive(&new_b);
-	if (child_score < 0 && child_score >= -egtb_score) {
-	  // aka == -(score - 1) - 1, but allow for gaps due to unoptimal
-	  // egtbs. E.g. I win in 8, but this child loses in 5
-	  *mv = ml.move[i];
-	  return egtb_score;
-	}
+        new_b = b;
+        move(&new_b, ml.move[i]);
+        int child_score = egtb_lookup_inclusive(&new_b);
+        if (child_score < 0 && child_score >= -egtb_score) {
+          // aka == -(score - 1) - 1, but allow for gaps due to unoptimal
+          // egtbs. E.g. I win in 8, but this child loses in 5
+          *mv = ml.move[i];
+          return egtb_score;
+        }
       }
       assert(0); // Hmmm, cannot find a winning path
     }
@@ -397,7 +397,7 @@ int query_egtb(tmove *mv) {
   } else {
     *mv = INVALID_MOVE;
     return EGTB_UNKNOWN;
-  }  
+  }
 }
 
 // m - a non-trivial move list (at least two moves to choose from)
@@ -434,30 +434,29 @@ tmove find_best_move_pns(tmovelist* m, int centis) {
 
   // Now run pns on each resulting move with increasing memory
   while ((first_iteration || !timer_expired)
-	 && (!WEAKENED || first_iteration)
-	 && allowed_nodes <= 8000000 &&
-	 // either i have several choices left, or i have a single choice left,
-	 // but i also have a proven draw
-	 (any_moves > 1 || any_moves == 1 && draw_move != -1)) {
+         && (!WEAKENED || first_iteration)
+         && allowed_nodes <= 8000000 &&
+         // either i have several choices left, or i have a single choice left,
+         // but i also have a proven draw
+         (any_moves > 1 || (any_moves == 1 && draw_move != -1))) {
     cerr << "PNS @ " << allowed_nodes << " nodes........................\n";
-    for (int i = 0; i < m->count && (first_iteration || !timer_expired);
-	 i++) {
+    for (int i = 0; i < m->count && (first_iteration || !timer_expired); i++) {
       // If there's anything left to research...
-      if (proof[i] && proof[i] != INF_NODES ||
-	  disproof[i] && disproof[i] != INF_NODES) {
-	t_pns_result res = pns_main(resulting_b + i, pns_space, allowed_nodes,
+      if ((proof[i] && proof[i] != INF_NODES) ||
+          (disproof[i] && disproof[i] != INF_NODES)) {
+        t_pns_result res = pns_main(resulting_b + i, pns_space, allowed_nodes,
                                     NULL);
-	if (!res.disproof) {
-	  kibitz(KIB_WIN, "I got lucky!");
-	  return m->move[i];
-	}
-	proof[i] = res.proof, disproof[i] = res.disproof;
-	cerr << s[i] << " " << proof[i] << " | " << disproof[i] << endl;
-	if (proof[i] == INF_NODES && disproof[i] == INF_NODES)
-	  draw_move = i;
-	if (disproof[i] == INF_NODES &&
-	    (proof[i] == 0 || proof[i] == INF_NODES))
-	  any_moves--;
+        if (!res.disproof) {
+          kibitz(KIB_WIN, "I got lucky!");
+          return m->move[i];
+        }
+        proof[i] = res.proof, disproof[i] = res.disproof;
+        cerr << s[i] << " " << proof[i] << " | " << disproof[i] << endl;
+        if (proof[i] == INF_NODES && disproof[i] == INF_NODES)
+          draw_move = i;
+        if (disproof[i] == INF_NODES &&
+            (proof[i] == 0 || proof[i] == INF_NODES))
+          any_moves--;
       }
     }
     first_iteration = 0;
@@ -480,10 +479,11 @@ tmove find_best_move_pns(tmovelist* m, int centis) {
 
   // Accept suboptimal moves if they are at least half as good as the optimal
   int i = 1;
-  while (i < m->count &&
-	 (ratio[i] >= 0.75 * ratio[0] ||
-	  WEAKENED && (ratio[i] >= 0.05 * ratio[0])))
+  while ((i < m->count) &&
+         ((ratio[i] >= 0.75 * ratio[0]) ||
+          (WEAKENED && (ratio[i] >= 0.05 * ratio[0])))) {
     i++;
+  }
 
   cerr << "Choosing from: ";
   for (int k = 0; k < i; k++)
@@ -503,18 +503,18 @@ tmove find_best_move(int centis) {
       tmove mv;
       int egtb_score = query_egtb(&mv);
       if (mv.from != -1) {
-	if (egtb_score == EGTB_DRAW) {
-	  kibitz(KIB_DRAW, "Precomputed draw");
-	} else if (egtb_score >= 0) {
-	  char s[100];
-	  sprintf(s, "Precomputed win in %d moves", egtb_score / 2);
-	  kibitz(KIB_WIN, s);
-	} else if (egtb_score != EGTB_UNKNOWN) {
-	  char s[100];
-	  sprintf(s, "Precomputed loss in %d moves", (1 - egtb_score) / 2);
-	  kibitz(KIB_LOSS, s);
-	} else assert(0);
-	return mv;
+        if (egtb_score == EGTB_DRAW) {
+          kibitz(KIB_DRAW, "Precomputed draw");
+        } else if (egtb_score >= 0) {
+          char s[100];
+          sprintf(s, "Precomputed win in %d moves", egtb_score / 2);
+          kibitz(KIB_WIN, s);
+        } else if (egtb_score != EGTB_UNKNOWN) {
+          char s[100];
+          sprintf(s, "Precomputed loss in %d moves", (1 - egtb_score) / 2);
+          kibitz(KIB_LOSS, s);
+        } else assert(0);
+        return mv;
       }
     }
   }

@@ -26,6 +26,9 @@
 #include <stdlib.h>
 #include "common.h"
 
+const char* NEW_BOARD = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const char* EMPTY_BOARD = "8/8/8/8/8/8/8/8 w - - 0 1";
+
 // Command-line arguments. Default values here.
 string FLAGS_command = "";
 char*  FLAGS_movelist = NULL;
@@ -100,7 +103,7 @@ void recompute_zobrist(tboard* b) {
 
 // Sets a board according to a FEN notation. If the FEN is incorrect, no
 // results are guaranteed.
-void fen_to_board(char* s, tboard *b) {
+void fen_to_board(const char* s, tboard *b) {
   // board
   int i = 0;
   while (i < 64) {
@@ -169,7 +172,7 @@ void fen_to_board(char* s, tboard *b) {
 /************************ Print the board in colors **************************/
 
 // fg is from 0 to 15, bg is from 0 to 7
-void colors(char *s, int fg, int bg) {
+void colors(const char *s, int fg, int bg) {
   fprintf(stderr, "\033[%d;%d;%dm%s", fg/8, 30 + fg%8, 40 + bg, s);
 }
 
@@ -529,8 +532,8 @@ void getallvalidmoves(tboard* b, tmovelist *m) {
       mv.to = mv.from - (b->side << 3);
       if (no_captures && b->b[mv.to] == EMPTY) {
         legalpawn(b, m, &mv); // One step forward
-        if (b->side == WHITE && issecondrank(mv.from) ||
-            b->side == BLACK && isseventhrank(mv.from)) {
+        if ((b->side == WHITE && issecondrank(mv.from)) ||
+            (b->side == BLACK && isseventhrank(mv.from))) {
           mv.to -= b->side << 3;
           if (b->b[mv.to] == EMPTY)
             m->move[m->count++] = mv; // Two steps forward

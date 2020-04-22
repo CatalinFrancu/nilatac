@@ -26,7 +26,7 @@ endif
 endif
 endif
 
-CC_OPT = -Wall -O3 $(WEAK_OPT)
+CC_OPT = -Wall -Wno-char-subscripts -O3 $(WEAK_OPT)
 
 
 all: bin unzip nilatac nilatac-pn

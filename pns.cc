@@ -356,11 +356,11 @@ t_pns_node* select_mpn(t_pns_node* node, t_pns_data* data) {
 // Sets node->proof and node->disproof if b is a final position.
 // Assumes there are no legal moves on b.
 inline void set_values_leaf(t_pns_node* node, tboard* b) {
-  node->proof = 
+  node->proof =
     ((b->side == WHITE && b->whitecount < b->blackcount) ||
      (b->side == BLACK && b->whitecount > b->blackcount)) ?
     0 : INF_NODES;
-  node->disproof = 
+  node->disproof =
     ((b->side == BLACK && b->whitecount < b->blackcount) ||
      (b->side == WHITE && b->whitecount > b->blackcount)) ?
     0 : INF_NODES;
@@ -479,7 +479,7 @@ void copy_proof_to_book(t_pns_node* dest, t_pns_node* src, int depth,
 // Create a node's children and initialize them using the lower-level PNS
 void expand(t_pns_data* data, t_pns_node* node, int quick) {
   if (data == book && !quick) {
-    t_pns_result res = pns_main(&data->b_current, pns_space, 0, NULL);
+    pns_main(&data->b_current, pns_space, 0, NULL);
     copy_proof_to_book(node, pns_space->root, 1, 0);
     // Sort the children in increasing order of disproof number and decreasing
     // order of proof number
@@ -499,7 +499,7 @@ void expand(t_pns_data* data, t_pns_node* node, int quick) {
     for (int i = 0; i < node->num_children; i++)
       node->child[i]->ratio = 1.0 * node->child[i]->proof /
                               node->child[i]->disproof;
-    
+
     // Print the children
     for (int i = 0; i < node->num_children; i++) {
       cerr << move_to_san(&data->b_current, node->child[i]->mv) << " -> "
@@ -865,7 +865,7 @@ void browse_pns_tree(const char* filename) {
 	    i++;
 	  }
 	}
-	
+
 	if (!found) {
           long x = strtol(arg, NULL, 10);
           if (x >= 1 && x <= current_node->num_children) {
@@ -976,7 +976,7 @@ void browse_pns_tree(const char* filename) {
 	    i++;
 	  }
 	}
-	
+
 	if (!found) {
 	  cerr << "No such child: [" << arg << "]" << endl;
           break;
