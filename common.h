@@ -47,8 +47,6 @@ extern int    FLAGS_max_depth;
 extern bool   FLAGS_by_ratio;
 extern int    FLAGS_save_every;
 
-// Global variables, mostly for zippy
-extern string g_oppname;
 extern bool g_winning_line_found;
 
 enum { EMPTY = 0, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING };

@@ -209,31 +209,11 @@ int main(int argc, char* argv[]) {
     } else if (!strcmp(command, "quit")) {
       break;
 
-    } else if (!strcmp(command, "name")) {
-      string old_oppname = g_oppname;
-      g_oppname = get_token(NULL);
-      if (g_oppname != old_oppname)
-        printf("tellall Hello %s! This is a *suicide* game. If you don't want "
-               "to play suicide, type \"abort\" now.\n", g_oppname.c_str());
-
-    } else if (!strcmp(command, "protover")) {
-      info((string)"Protocol version " + get_token(NULL));
-
-    } else if (!strcmp(command, "result")) {
-
-    } else if (!strcmp(command, "xboard")) {
-      info("Driven by xboard");
-
-    } else if (!strcmp(command, "accepted") ||
-               !strcmp(command, "hard") ||
-               !strcmp(command, "random")) {
-      // These commands will be silently ignored to produce less garbage
-
     } else {
-      fatal((string)"Ignoring command " + command);
+      fatal((string)"Unknown command " + command);
     }
   }
 
-  info("Exiting...");
+  info("Shutting down.");
   return 0;
 }

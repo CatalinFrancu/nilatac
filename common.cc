@@ -38,8 +38,6 @@ int    FLAGS_max_depth = 6;
 bool   FLAGS_by_ratio = false;  // Select book mpn by ratio or by proof number
 int    FLAGS_save_every = 5;
 
-// Global variables, mostly for zippy
-string g_oppname = "";
 bool g_winning_line_found = false;
 
 const tmove INVALID_MOVE = { -1, -1, -1, -1 };
