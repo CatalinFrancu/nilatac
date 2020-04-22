@@ -409,11 +409,18 @@ void init_egtb_index() {
 
 FILE* egtb_files[4];
 
-void open_egtb_files() {
-  egtb_files[0] = fopen("egtb/egtb0.in", "rt");
-  egtb_files[1] = fopen("egtb/egtb1.in", "rt");
-  egtb_files[2] = fopen("egtb/egtb2.in", "rt");
-  egtb_files[3] = fopen("egtb/egtb3.in", "rt");
+void open_egtb_files(const char* egtb_dir) {
+  const char* pattern = "%s/egtb%d.in";
+  char s[1000];
+  for (int i = 0; i < 4; i++) {
+    sprintf(s, pattern, egtb_dir, i);
+    egtb_files[i] = fopen(s, "rt");
+    if (egtb_files[i]) {
+      info((string)"Opened EGTB file " + s);
+    } else {
+      fatal((string)"EGTB file [" + s + "] not found.");
+    }
+  }
 }
 
 // We store the distance to mate in plies, one byte per position. 0 through 125
@@ -1045,12 +1052,12 @@ int string_to_config(string piecenames) {
 
 int egtb_inited = 0;
 
-void init_egtb() {
+void init_egtb(const char* egtb_dir) {
   if (egtb_inited) return; // Don't initialize twice
   precompute_comb();
   precompute_transforms();
   init_canonics();
   init_egtb_index();
-  open_egtb_files();
+  open_egtb_files(egtb_dir);
   egtb_inited = 1;
 }

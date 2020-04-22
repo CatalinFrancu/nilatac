@@ -46,12 +46,12 @@ void restart(void) {
   g_winning_line_found = false;
 }
 
-void init(const char* book_file_name) {
+void init(const char* book_file_name, const char* egtb_dir_name) {
   init_hash();
   init_pns(book_file_name);
 
   if (USE_EGTB && !WEAKENED) {
-    init_egtb();
+    init_egtb(egtb_dir_name);
   }
 }
 
@@ -326,7 +326,7 @@ int query_egtb(tboard* b, tmove *mv) {
   tmovelist ml;
   tboard new_b;
   int egtb_score = egtb_lookup(b);
-  cerr << "            EGTB score: " << egtb_score << endl;
+  cerr << "[EGTB] score: " << egtb_score << endl;
   if (egtb_score != EGTB_UNKNOWN) {
     if (egtb_score == EGTB_DRAW || egtb_score < 0) {
       // Find a move that draws, or loses in as many moves as possible

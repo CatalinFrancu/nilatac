@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
   parse_command_line(argc, argv);
 
   init_common();
-  init(BOOK_FILENAME);
+  init(BOOK_FILENAME, EGTB_DIRNAME);
 
   if (FLAGS_command == "analyze") {
     tmovelist ml;
@@ -130,14 +130,14 @@ int main(int argc, char** argv) {
     print_weak_pns_lines(FLAGS_pn_ratio, FLAGS_max_depth);
 
   } else if (FLAGS_command == "create_egtb") {
-    init_egtb();
+    init_egtb(EGTB_DIRNAME);
     // Prevent overwriting of the egtb file. Uncomment if you know what you're
     // doing
     // egtb_create(atoi(argv[2]), atoi(argv[3]));
 
   } else if (FLAGS_command == "create_egtb_config") {
     // Create one specific EGTB (e.g. KPPvK)
-    init_egtb();
+    init_egtb(EGTB_DIRNAME);
     for (int i = 2; i < argc; i++) {
       int config = string_to_config(argv[i]);
       if (config == -1) {

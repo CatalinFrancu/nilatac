@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "common.h"
+#include "egtb.h"
 #include "pns.h"
 #include "suicide.h"
 
@@ -140,26 +141,34 @@ int main(int argc, char* argv[]) {
 
   tboard b;
   char* book_file_name = NULL;
+  char* egtb_dir_name = NULL;
   int opt = 0;
 
   static struct option long_options[] =
     {
      {"book", required_argument, 0,  'b' },
+     {"egtb", required_argument, 0,  'e' },
      {0,      0,                 0,  0 }
     };
 
-  while ((opt = getopt_long(argc, argv, "b:", long_options, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "b:e:", long_options, NULL)) != -1) {
     switch (opt) {
       case 'b':
         book_file_name = strdup(optarg);
         break;
+      case 'e':
+        egtb_dir_name = strdup(optarg);
+        break;
       default:
-        fatal((string)"Usage: " + argv[0] + " [-b|--book book_file_name]");
+        fatal((string)"Usage: " + argv[0] +
+              " [-b|--book book_file_name]" +
+              " [-e|--egtb egtb_dir_name]");
     }
   }
 
   init_common();
-  init(book_file_name ? book_file_name : BOOK_FILENAME);
+  init(book_file_name ? book_file_name : BOOK_FILENAME,
+       egtb_dir_name ? egtb_dir_name : EGTB_DIRNAME);
   restart();
 
   setbuf(stdout, NULL);

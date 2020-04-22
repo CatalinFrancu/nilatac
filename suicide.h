@@ -21,7 +21,9 @@
 
 #include "common.h"
 
-void init(const char* book_file_name); // needs to be here as it calls preprocessMoves()
+// needs to be here as it calls preprocessMoves()
+void init(const char* book_file_name, const char* egtb_dir_name);
+
 void restart();
 int canmove(tboard* b);
 void play_opening();

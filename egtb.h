@@ -21,6 +21,7 @@
 
 #include "common.h"
 
+#define EGTB_DIRNAME "egtb"
 #define MEN 4
 
 #define EGTB_UNKNOWN -127
@@ -28,7 +29,7 @@
 #define EGTB_MAX_VALUE 125 // Never store wins in more than this many plies
 #define EGTB_NOT_IN_INDEX 4000000000u
 
-void init_egtb();
+void init_egtb(const char* egtb_dir);
 
 // Look up a position, return the perfect score
 // Assumes that the position is in the index
