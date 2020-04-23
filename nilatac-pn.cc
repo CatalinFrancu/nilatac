@@ -107,7 +107,7 @@ void parse_command_line(int argc, char** argv) {
 int main(int argc, char** argv) {
   parse_command_line(argc, argv);
 
-  init_common();
+  init_common(NULL);
   init(BOOK_FILENAME, EGTB_DIRNAME);
 
   if (FLAGS_command == "analyze") {

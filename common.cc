@@ -16,6 +16,7 @@
  * along with Nilatac; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  **/
+#include <fstream>
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
@@ -166,7 +167,7 @@ void fen_to_board(const char* s, tboard *b) {
 
 // fg is from 0 to 15, bg is from 0 to 7
 void colors(const char *s, int fg, int bg) {
-  fprintf(stderr, "\033[%d;%d;%dm%s", fg/8, 30 + fg%8, 40 + bg, s);
+  cerr << "\033[" << (fg / 8) << ";" << (30 + fg % 8) << ";" << (40 + bg) << "m" << s;
 }
 
 // Colors to print the board in
@@ -178,31 +179,34 @@ void colors(const char *s, int fg, int bg) {
 void blankline(int i) {
   int j;
 
-  fprintf(stderr, "  ");
+  cerr << "  ";
   for (j = 0; j < 8; j++) {
     colors("     ", 0, (i + j) % 2 ? BLACKSQUARE : WHITESQUARE);
   }
-  fprintf(stderr, "\033[0m\n");
+  cerr << "\033[0m" << endl;
 }
 
 void printboard(tboard* b) {
   char s[10];
-  fprintf(stderr, "    A    B    C    D    E    F    G    H\n");
+  cerr << "    A    B    C    D    E    F    G    H" << endl;
   for (int i = 0; i < 8; i++) {
     blankline(i);
-    fprintf(stderr, "%d ", 8 - i);
+    cerr << 8 - i << " ";
     for (int j = 0; j < 8; j++) {
       sprintf(s, "  %c  ", piecename[abs(b->b[assemble(i, j)])]);
       colors(s, b->b[assemble(i, j)] > 0 ? WHITEPIECE : BLACKPIECE,
              (i + j) % 2 ? BLACKSQUARE : WHITESQUARE);
     }
-    fprintf(stderr, "\033[0m %d\n", 8 - i);
+    cerr << "\033[0m " << 8 - i << endl;
 
     blankline(i);
   }
-  fprintf(stderr, "    A    B    C    D    E    F    G    H\n");
-  fprintf(stderr, "epsquare: %d side: %d wc: %d bc: %d hash: %llu\n",
-          b->epsquare, b->side, b->whitecount, b->blackcount, b->hashValue);
+  cerr << "    A    B    C    D    E    F    G    H" << endl;
+  cerr << "epsquare: " << b->epsquare
+       << " side: " << b->side
+       << " wc: " << b->whitecount
+       << " bc: " << b->blackcount
+       << " hash: " << b->hashValue << endl;
 }
 
 int same_move(tmove m1, tmove m2) {
@@ -709,7 +713,17 @@ void init_zobrist() {
     zobrist.epZ[i] = rand64();
 }
 
-void init_common() {
+void init_log(const char* log_file_name) {
+  if (log_file_name) {
+    // static = don't let it be deleted on function return
+    static ofstream out(log_file_name, ios::out | ios::app);
+    cerr.rdbuf(out.rdbuf());
+  }
+}
+
+void init_common(const char* log_file_name) {
+  init_log(log_file_name);
+
   struct timeval tv;
   gettimeofday(&tv, NULL);
   srand(tv.tv_usec);

@@ -142,16 +142,18 @@ int main(int argc, char* argv[]) {
   tboard b;
   char* book_file_name = NULL;
   char* egtb_dir_name = NULL;
+  char* log_file_name = NULL;
   int opt = 0;
 
   static struct option long_options[] =
     {
      {"book", required_argument, 0,  'b' },
      {"egtb", required_argument, 0,  'e' },
+     {"log",  required_argument, 0,  'l' },
      {0,      0,                 0,  0 }
     };
 
-  while ((opt = getopt_long(argc, argv, "b:e:", long_options, NULL)) != -1) {
+  while ((opt = getopt_long(argc, argv, "b:e:l:", long_options, NULL)) != -1) {
     switch (opt) {
       case 'b':
         book_file_name = strdup(optarg);
@@ -159,14 +161,18 @@ int main(int argc, char* argv[]) {
       case 'e':
         egtb_dir_name = strdup(optarg);
         break;
+      case 'l':
+        log_file_name = strdup(optarg);
+        break;
       default:
         fatal((string)"Usage: " + argv[0] +
               " [-b|--book book_file_name]" +
-              " [-e|--egtb egtb_dir_name]");
+              " [-e|--egtb egtb_dir_name]" +
+              " [-l|--log log_file_name]");
     }
   }
 
-  init_common();
+  init_common(log_file_name);
   init(book_file_name ? book_file_name : BOOK_FILENAME,
        egtb_dir_name ? egtb_dir_name : EGTB_DIRNAME);
   restart();

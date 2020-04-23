@@ -145,6 +145,6 @@ void string_to_movelist(char* s, tmovelist* ml);
 void move(tboard* b, tmove mv);
 int canmove(tboard* b);
 
-void init_common();
+void init_common(const char* log_file_name);
 
 #endif /* _COMMON_H */

@@ -91,13 +91,13 @@ void load_lenthep_book(char* filename) {
       boards[current_depth + 1] = boards[current_depth];
       move(boards + current_depth + 1, mv);
       cout << "expand\n";
-      
+
       // We need to actually exp
       if (current_node->num_children == 0) {
 	expand(book, current_node, 1);
 	update_ancestors(&book->b_current, current_node, 0);
       }
-      
+
       int child = -1;
       for (int i = 0; i < current_node->num_children; i++) {
 	if (same_move(mv, current_node->child[i]->mv))
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
   }
 
   init();
-  init_common();
+  init_common(NULL);
   load_lenthep_book(argv[1]);
   cout << "save" << endl
        << "quit" << endl;
