@@ -1,11 +1,12 @@
 # Nilatac
 
-A suicide chess engine compatible with xboard and FICS
+A suicide chess engine with UCI support
 
 ## Quick links
 
 * [Online opening book](http://catalin.francu.com/nilatac/book.php)
 * [About page](http://catalin.francu.com/nilatac/)
+* [Nilatac's Lichess profile](https://lichess.org/@/NilatacBot) (see also its weakened sibling, [CatNail](https://lichess.org/@/CatNail))
 
 ## Status
 
@@ -20,9 +21,9 @@ If you have questions or contributions, please contact me - I still have a gener
 * Choose a make target (read the Makefile for details).
 * Run `make <target>`.
 
-## Single-player mode (xboard)
+## Single-player mode
 
-The script `single-player.sh` should just work (TM). Feel free to tweak it.
+Nilatac has basic UCI support, so it should work (or almost work...) with any variant-aware GUI. I have tested it with [cutechess](https://github.com/cutechess/cutechess). If you would like to see better support for your favorite GUI, please let me know and I can work on it.
 
 ## Book browser
 
