@@ -356,7 +356,7 @@ t_pns_node* select_mpn(t_pns_node* node, t_pns_data* data) {
 inline void set_values_leaf(t_pns_node* node, tboard* b) {
   // international rules: if you get stalemated, you win
   node->proof = 0;
-  node->proof = INF_NODES;
+  node->disproof = INF_NODES;
 }
 
 // Sets the P & D values for a newly expanded node in PNS
