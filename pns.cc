@@ -92,8 +92,8 @@ int delete_pns_child(t_pns_node* node, int i) {
   node->child[i] = node->child[--node->num_children];
   // Fit the vector of pointers to children to match the decrease in size
   node->child = (t_pns_node**)realloc(node->child,
-				      node->num_children *
-				      sizeof(t_pns_node*));
+                                      node->num_children *
+                                      sizeof(t_pns_node*));
   assert(node->child != NULL);
   update_ancestors(NULL, node, 0);
   return 1;
@@ -130,12 +130,12 @@ int trim_uninteresting_branches(t_pns_node* node, tboard* b, int trivialize) {
       tboard new_b = *b;
       move(&new_b, node->child[i]->mv);
       triv_children &= trim_uninteresting_branches(node->child[i], &new_b,
-						   trivialize);
+                                                   trivialize);
     }
   } else {                                                              // won
     int winning_child = 0;
     while (winning_child < node->num_children &&
-	   node->child[winning_child]->disproof)
+           node->child[winning_child]->disproof)
       winning_child++;
     if (winning_child == node->num_children)
       printboard(b);
@@ -153,7 +153,7 @@ int trim_uninteresting_branches(t_pns_node* node, tboard* b, int trivialize) {
     tboard new_b = *b;
     move(&new_b, node->child[0]->mv);
     triv_children = trim_uninteresting_branches(node->child[0], &new_b,
-						trivialize);
+                                                trivialize);
   }
 
   // Now, if all children are trivial, try to solve this node as well and, if
@@ -209,7 +209,7 @@ inline void recompute_ratio(t_pns_node* node) {
     node->ratio = 1.0 / x;
     for (int i = 0; i < node->num_children; i++) {
       if (1 / node->child[i]->ratio < node->ratio)
-	node->ratio = 1 / node->child[i]->ratio;
+        node->ratio = 1 / node->child[i]->ratio;
     }
   }
 }
@@ -276,7 +276,7 @@ void save_pns_tree(const char* filename, t_pns_data* data) {
 }
 
 void add_to_pns_hash_recursively(t_pns_hash* pns_hash, t_pns_node* node,
-				 tboard* b) {
+                                 tboard* b) {
   if (node == NULL || !node->num_children) return;
 
   tboard orig_b = *b;
@@ -347,21 +347,16 @@ t_pns_node* select_mpn(t_pns_node* node, t_pns_data* data) {
   }
   if (data == book)
     cerr << endl << "Original values: " << node->proof << "|" << node->disproof
-	 << " (" << node->ratio << ")" << endl;
+         << " (" << node->ratio << ")" << endl;
   return node;
 }
 
 // Sets node->proof and node->disproof if b is a final position.
 // Assumes there are no legal moves on b.
 inline void set_values_leaf(t_pns_node* node, tboard* b) {
-  node->proof =
-    ((b->side == WHITE && b->whitecount < b->blackcount) ||
-     (b->side == BLACK && b->whitecount > b->blackcount)) ?
-    0 : INF_NODES;
-  node->disproof =
-    ((b->side == BLACK && b->whitecount < b->blackcount) ||
-     (b->side == WHITE && b->whitecount > b->blackcount)) ?
-    0 : INF_NODES;
+  // international rules: if you get stalemated, you win
+  node->proof = 0;
+  node->proof = INF_NODES;
 }
 
 // Sets the P & D values for a newly expanded node in PNS
@@ -496,7 +491,7 @@ void expand(t_pns_data* data, t_pns_node* node, int quick) {
     // Set the children's ratios
     for (int i = 0; i < node->num_children; i++)
       node->child[i]->ratio = 1.0 * node->child[i]->proof /
-                              node->child[i]->disproof;
+        node->child[i]->disproof;
 
     // Print the children
     for (int i = 0; i < node->num_children; i++) {
@@ -533,12 +528,12 @@ t_pns_node* pns_follow_path(t_pns_data* data, tmovelist* ml) {
     if (!root->num_children) {
       cerr << "Expanding node so we can follow "
            << move_to_san(&data->b_current, ml->move[i])
-	   << endl;
+           << endl;
       expand(data, root, 1);
     }
     int j = 0;
     while (j < root->num_children &&
-	   !same_move(ml->move[i], root->child[j]->mv))
+           !same_move(ml->move[i], root->child[j]->mv))
       j++;
     assert(j != root->num_children);
     root = root->child[j];
@@ -553,7 +548,7 @@ int hash_tree_top(t_pns_node* root, tboard* b, int depth) {
   if (!depth) return 0;
   if (!root->proof || !root->disproof) {
     ADD_TO_HASH(b->hashValue, MAXDEPTH, (root->proof ? -WIN : WIN), H_EQ,
-		0xff);
+                0xff);
     return 1;
   }
 
@@ -589,10 +584,10 @@ int set_proof_numbers(tboard* b, t_pns_node* node, int update_ratios) {
     node->disproof = 0;
     for (int i = 0; i < node->num_children; i++) {
       if (node->child[i]->disproof < node->proof)
-	node->proof = node->child[i]->disproof;
+        node->proof = node->child[i]->disproof;
       node->disproof += node->child[i]->proof;
       if (node->disproof > INF_NODES)
-	node->disproof = INF_NODES;
+        node->disproof = INF_NODES;
     }
     if (update_ratios) recompute_ratio(node);
 
@@ -649,10 +644,10 @@ t_pns_result pns_main(tboard* b, t_pns_data* data, int max_nodes,
 
   int round_robin = 0; // In lenthep mode, save book more seldom
   while ((pns_finite(root->proof) || pns_finite(root->disproof)) &&
- 	 data->size < max_nodes) {
+         data->size < max_nodes) {
     if (data == book)
       cerr << "\nProof " << root->proof << " Disproof " << root->disproof
-	   << "       Ratio " << root->ratio << endl;
+           << "       Ratio " << root->ratio << endl;
     t_pns_node* mpn = select_mpn(root, data);
 
     // Check whether the last 4 moves revert to the position 4 moves ago
@@ -677,10 +672,10 @@ t_pns_result pns_main(tboard* b, t_pns_data* data, int max_nodes,
       (*pns_hash)[data->b_current.hashValue] = mpn;
     if (data == book) {
       if (++round_robin == FLAGS_save_every) {
-	round_robin = 0;
-	save_pns_tree(BOOK_FILENAME, data);
+        round_robin = 0;
+        save_pns_tree(BOOK_FILENAME, data);
       } else {
-	cerr << "Saving in " << (FLAGS_save_every - round_robin) << " iterations\n";
+        cerr << "Saving in " << (FLAGS_save_every - round_robin) << " iterations\n";
       }
     }
     if (timer_expired) break; // Loop at least once.
@@ -746,7 +741,7 @@ int pns_trim_move_list(tboard *b, tmovelist* ml, int max_nodes) {
   cerr << "[PNS]";
   for (int i = 0; i < ml->count; i++)
     cerr << " " << move_to_san(b, ml->move[i]) << " " << proof[i] << "|"
-	 << disproof[i];
+         << disproof[i];
   cerr << endl;
 
   // Now drop everything that's worse than 5% of the best node
@@ -781,7 +776,7 @@ int query_book(tboard *b, tmove* mv) {
   if (!node->proof) {
     for (int i = 0; i < node->num_children; i++)
       if (!node->child[i]->disproof) {
-	*mv = node->child[i]->mv;
+        *mv = node->child[i]->mv;
         return WIN;
       }
     assert(0); // Node is winning, but we couldn't find a winning move
@@ -845,60 +840,60 @@ void browse_pns_tree(const char* filename) {
     } else if (!strcmp(command, "down") || !strcmp(command, "d")) {
       char *s2 = s + strlen(command);
       while (sscanf(s2, "%s", arg) == 1) {
-	tmove mv = san_to_move(&book->b_current, arg);
-	int i = 0, found = 0;
-	while (i < current_node->num_children && !found) {
-	  if (same_move(mv, current_node->child[i]->mv)) {
-	    current_node = current_node->child[i];
+        tmove mv = san_to_move(&book->b_current, arg);
+        int i = 0, found = 0;
+        while (i < current_node->num_children && !found) {
+          if (same_move(mv, current_node->child[i]->mv)) {
+            current_node = current_node->child[i];
             cerr << "Going down [" << move_to_san(&book->b_current, mv) << "]"
                  << endl;
             move_names[ml.count] = move_to_san(&book->b_current, mv);
-	    ml.move[ml.count++] = mv;
-	    move(&book->b_current, mv);
-	    found = 1;
-	    boards[++level] = book->b_current;
-	  } else {
-	    i++;
-	  }
-	}
+            ml.move[ml.count++] = mv;
+            move(&book->b_current, mv);
+            found = 1;
+            boards[++level] = book->b_current;
+          } else {
+            i++;
+          }
+        }
 
-	if (!found) {
+        if (!found) {
           long x = strtol(arg, NULL, 10);
           if (x >= 1 && x <= current_node->num_children) {
             cerr << "Going down ["
                  << move_to_san(&book->b_current,
                                 current_node->child[x - 1]->mv)
                  << "]\n";
-	    current_node = current_node->child[x - 1];
+            current_node = current_node->child[x - 1];
             move_names[ml.count] = move_to_san(&book->b_current,
                                                current_node->mv);
-	    ml.move[ml.count++] = current_node->mv;
-	    move(&book->b_current, current_node->mv);
-	    boards[++level] = book->b_current;
+            ml.move[ml.count++] = current_node->mv;
+            move(&book->b_current, current_node->mv);
+            boards[++level] = book->b_current;
           } else {
             cerr << "No such child: [" << arg << "]" << endl;
           }
         }
         while (isspace(*s2)) s2++;
-	s2 += strlen(arg);
+        s2 += strlen(arg);
       }
     } else if (!strcmp(command, "delete")) {
       tmove mv = san_to_move(&book->b_current, arg);
       int i = 0, found = 0;
       while (i < current_node->num_children && !found) {
-	if (same_move(mv, current_node->child[i]->mv)) {
-	  delete_pns_child(current_node, i);
-	  found = 1;
-	} else {
-	  i++;
-	}
+        if (same_move(mv, current_node->child[i]->mv)) {
+          delete_pns_child(current_node, i);
+          found = 1;
+        } else {
+          i++;
+        }
       }
 
       if (found)
-	cerr << "Deleted child [" << move_to_san(&book->b_current, mv) << "]"
+        cerr << "Deleted child [" << move_to_san(&book->b_current, mv) << "]"
              << endl;
       else
-	cerr << "No such child: [" << arg << "]" << endl;
+        cerr << "No such child: [" << arg << "]" << endl;
     } else if (!strcmp(command, "top") || !strcmp(command, "t")) {
       current_node = book->root;
       book->b_current = book->b_orig;
@@ -909,31 +904,31 @@ void browse_pns_tree(const char* filename) {
       int delta = atoi(arg);
       if (!delta) delta = 1;
       if (delta > level) {
-	cerr << "You cannot go up by that many levels\n";
+        cerr << "You cannot go up by that many levels\n";
       } else {
-	for (int i = 0; i < delta; i++)
-	  current_node = current_node->parent;
-	level -= delta;
-	book->b_current = boards[level];
-	ml.count -= delta;
+        for (int i = 0; i < delta; i++)
+          current_node = current_node->parent;
+        level -= delta;
+        book->b_current = boards[level];
+        ml.count -= delta;
       }
     } else if (!strcmp(command, "path")) {
       if (ml.count) {
-	cerr << "You're looking at";
+        cerr << "You're looking at";
         for (int i = 0; i < ml.count; i++)
           cerr << " " << move_names[i];
         cerr << endl;
       } else {
-	cerr << "You're at root level in the book\n";
+        cerr << "You're at root level in the book\n";
       }
     } else if (!strcmp(command, "board") || !strcmp(command, "b")) {
       printboard(&book->b_current);
     } else if (!strcmp(command, "expand") || !strcmp(command, "e")) {
       if (current_node ->num_children)
-	cerr << "This node already has some children\n";
+        cerr << "This node already has some children\n";
       else {
-	expand(book, current_node, 1);
-	update_ancestors(&book->b_current, current_node, 1);
+        expand(book, current_node, 1);
+        update_ancestors(&book->b_current, current_node, 1);
       }
     } else if (!strcmp(command, "unexpand")) {
       delete_pns_node(current_node);
@@ -959,24 +954,24 @@ void browse_pns_tree(const char* filename) {
       current_node = book->root;
       level = 0;
       for (int k = 0; k < ml.count; k++) {
-	int i = 0, found = 0;
-	while (i < current_node->num_children && !found) {
-	  if (same_move(ml.move[k], current_node->child[i]->mv)) {
-	    current_node = current_node->child[i];
+        int i = 0, found = 0;
+        while (i < current_node->num_children && !found) {
+          if (same_move(ml.move[k], current_node->child[i]->mv)) {
+            current_node = current_node->child[i];
             cerr << "Going down [" << move_to_san(&book->b_current, ml.move[k])
                  << "]" << endl;
-	    move(&book->b_current, ml.move[k]);
-	    level++;
-	    found = 1;
-	  } else {
-	    i++;
-	  }
-	}
+            move(&book->b_current, ml.move[k]);
+            level++;
+            found = 1;
+          } else {
+            i++;
+          }
+        }
 
-	if (!found) {
-	  cerr << "No such child: [" << arg << "]" << endl;
+        if (!found) {
+          cerr << "No such child: [" << arg << "]" << endl;
           break;
-	}
+        }
       }
       print_tree(current_node, 1, 1);
     } else if (!strcmp(command, "save")) {

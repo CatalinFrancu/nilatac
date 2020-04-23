@@ -109,8 +109,7 @@ int static_eval(tboard* b) {
   getallvalidmoves(b, &ml);
 
   if (ml.count == 0) {
-    return (b->whitecount < b->blackcount) ?
-      z(WIN) : ((b->whitecount == b->blackcount) ? DRAW : -z(WIN));
+    return WIN;
   }
 
   int score = ml.count * MOBILITY_FACTOR;
@@ -167,11 +166,12 @@ int eval_board(tboard* b, int depth, int alpha, int beta) {
   if (!depth || timer_expired) return static_eval(b);
 
   if ((b->side == WHITE && !b->whitecount) ||
-      (b->side == BLACK && !b->blackcount))
+      (b->side == BLACK && !b->blackcount)) {
     return WIN;
-  if (!canmove(b))
-    return (b->whitecount < b->blackcount) ? z(WIN):
-      ((b->whitecount == b->blackcount) ? DRAW : -z(WIN));
+  }
+  if (!canmove(b)) {
+    return WIN;
+  }
 
   // Search for the position in the hash
   if (depth >= MIN_HASH_DEPTH) hs_reads++;
