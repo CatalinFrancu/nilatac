@@ -110,7 +110,7 @@ typedef struct {
   tmove m;
 } tsaverec;
 
-void set_alarm(int centis);
+void set_alarm(int millis);
 extern int timer_expired;
 
 void info(string s);

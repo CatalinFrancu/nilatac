@@ -104,7 +104,7 @@ void fen_to_board(const char* s, tboard *b) {
     if (c >= '1' && c <= '8') {
       int num_spaces = c - '0';
       if ((i / 8) - ((i + num_spaces - 1) / 8) > 0) {
-	cerr << "Bad FEN1\n"; return;
+        cerr << "Bad FEN1\n"; return;
       }
       while (num_spaces--) b->b[i++] = EMPTY;
     } else if (namepiece[c] != EMPTY) {
@@ -123,9 +123,9 @@ void fen_to_board(const char* s, tboard *b) {
     cerr << "Bad FEN4\n"; return;
   }
   switch (toupper(*(s++))) {
-  case 'W': b->side = WHITE; break;
-  case 'B': b->side = BLACK; break;
-  default: cerr << "Bad FEN5\n"; return;
+    case 'W': b->side = WHITE; break;
+    case 'B': b->side = BLACK; break;
+    default: cerr << "Bad FEN5\n"; return;
   }
 
   // space castles
@@ -145,7 +145,7 @@ void fen_to_board(const char* s, tboard *b) {
     b->epsquare = NO_EP_SQUARE;
   } else {
     if (c < 'a' || c > 'h') {
-    cerr << "Bad FEN8\n"; return;
+      cerr << "Bad FEN8\n"; return;
     }
     char r = *(s++);
     if (r < '1' || r > '8') {
@@ -194,7 +194,7 @@ void printboard(tboard* b) {
     for (int j = 0; j < 8; j++) {
       sprintf(s, "  %c  ", piecename[abs(b->b[assemble(i, j)])]);
       colors(s, b->b[assemble(i, j)] > 0 ? WHITEPIECE : BLACKPIECE,
-	     (i + j) % 2 ? BLACKSQUARE : WHITESQUARE);
+             (i + j) % 2 ? BLACKSQUARE : WHITESQUARE);
     }
     fprintf(stderr, "\033[0m %d\n", 8 - i);
 
@@ -202,7 +202,7 @@ void printboard(tboard* b) {
   }
   fprintf(stderr, "    A    B    C    D    E    F    G    H\n");
   fprintf(stderr, "epsquare: %d side: %d wc: %d bc: %d hash: %llu\n",
-	  b->epsquare, b->side, b->whitecount, b->blackcount, b->hashValue);
+          b->epsquare, b->side, b->whitecount, b->blackcount, b->hashValue);
 }
 
 int same_move(tmove m1, tmove m2) {
@@ -229,14 +229,14 @@ void sortmovelist(tmovelist* m, int* values) {
     k = i;
     for (j = i + 1; j < m->count; j++)
       if (values[j] > values[k])
-	k = j;
+        k = j;
     maux = m->move[i]; m->move[i] = m->move[k]; m->move[k] = maux;
     iaux = values[i]; values[i] = values[k]; values[k] = iaux;
   }
 }
 
 void sort_by_pns_ratio(tmovelist* m, int* proof, int* disproof,
-		       double* ratio) {
+                       double* ratio) {
 
   for (int i = 0; i < m->count; i++)
     // we assume disproof isn't 0, or this move would have been a win for us
@@ -247,7 +247,7 @@ void sort_by_pns_ratio(tmovelist* m, int* proof, int* disproof,
     int k = i;
     for (int j = i + 1; j < m->count; j++)
       if (ratio[j] > ratio[k])
-	k = j;
+        k = j;
     tmove maux = m->move[i]; m->move[i] = m->move[k]; m->move[k] = maux;
     double raux = ratio[i]; ratio[i] = ratio[k]; ratio[k] = raux;
     int paux = proof[i]; proof[i] = proof[k]; proof[k] = paux;
@@ -323,10 +323,10 @@ int sane_board(tboard* b) {
 
 // This enum names the fields in table freedom[][]
 enum t_fieldtype {
-  PIECE = 0,  // What type of piece
-  DR = 1,
-  DF = 2,     // The trajectory it can move on
-  RANGE = 3   // The distance it can go
+                  PIECE = 0,  // What type of piece
+                  DR = 1,
+                  DF = 2,     // The trajectory it can move on
+                  RANGE = 3   // The distance it can go
 };
 
 // A freedom indicates a possible path that a piece may follow. For example,
@@ -335,38 +335,38 @@ enum t_fieldtype {
 // pieces have a range of 7 (i.e. infinite).
 #define FREEDOMS 32
 const int freedom[FREEDOMS][4] = {
-  { KNIGHT,  1,  2, 1 },
-  { KNIGHT,  1, -2, 1 },
-  { KNIGHT, -1,  2, 1 },
-  { KNIGHT, -1, -2, 1 },
-  { KNIGHT,  2,  1, 1 },
-  { KNIGHT,  2, -1, 1 },
-  { KNIGHT, -2,  1, 1 },
-  { KNIGHT, -2, -1, 1 },
-  { BISHOP, -1, -1, 7 },
-  { BISHOP,  1, -1, 7 },
-  { BISHOP, -1,  1, 7 },
-  { BISHOP,  1,  1, 7 },
-  { ROOK,   -1,  0, 7 },
-  { ROOK,    1,  0, 7 },
-  { ROOK,    0, -1, 7 },
-  { ROOK,    0,  1, 7 },
-  { QUEEN,  -1, -1, 7 },
-  { QUEEN,   1, -1, 7 },
-  { QUEEN,  -1,  1, 7 },
-  { QUEEN,   1,  1, 7 },
-  { QUEEN,  -1,  0, 7 },
-  { QUEEN,   1,  0, 7 },
-  { QUEEN,   0, -1, 7 },
-  { QUEEN,   0,  1, 7 },
-  { KING,   -1, -1, 1 },
-  { KING,    1, -1, 1 },
-  { KING,   -1,  1, 1 },
-  { KING,    1,  1, 1 },
-  { KING,   -1,  0, 1 },
-  { KING,    1,  0, 1 },
-  { KING,    0, -1, 1 },
-  { KING,    0,  1, 1 }
+                                  { KNIGHT,  1,  2, 1 },
+                                  { KNIGHT,  1, -2, 1 },
+                                  { KNIGHT, -1,  2, 1 },
+                                  { KNIGHT, -1, -2, 1 },
+                                  { KNIGHT,  2,  1, 1 },
+                                  { KNIGHT,  2, -1, 1 },
+                                  { KNIGHT, -2,  1, 1 },
+                                  { KNIGHT, -2, -1, 1 },
+                                  { BISHOP, -1, -1, 7 },
+                                  { BISHOP,  1, -1, 7 },
+                                  { BISHOP, -1,  1, 7 },
+                                  { BISHOP,  1,  1, 7 },
+                                  { ROOK,   -1,  0, 7 },
+                                  { ROOK,    1,  0, 7 },
+                                  { ROOK,    0, -1, 7 },
+                                  { ROOK,    0,  1, 7 },
+                                  { QUEEN,  -1, -1, 7 },
+                                  { QUEEN,   1, -1, 7 },
+                                  { QUEEN,  -1,  1, 7 },
+                                  { QUEEN,   1,  1, 7 },
+                                  { QUEEN,  -1,  0, 7 },
+                                  { QUEEN,   1,  0, 7 },
+                                  { QUEEN,   0, -1, 7 },
+                                  { QUEEN,   0,  1, 7 },
+                                  { KING,   -1, -1, 1 },
+                                  { KING,    1, -1, 1 },
+                                  { KING,   -1,  1, 1 },
+                                  { KING,    1,  1, 1 },
+                                  { KING,   -1,  0, 1 },
+                                  { KING,    1,  0, 1 },
+                                  { KING,    0, -1, 1 },
+                                  { KING,    0,  1, 1 }
 };
 
 // A ray stores all the possible moves for one piece in one given direction,
@@ -398,11 +398,11 @@ void preprocessMoves() {
           // Keep going until we exceed the range or we run off the board
           int i, j, size = 0;
           for (range = 1,
-		 i = rank(from_square) + freedom[k][DR],
-		 j = file(from_square) + freedom[k][DF];
+                 i = rank(from_square) + freedom[k][DR],
+                 j = file(from_square) + freedom[k][DF];
                (range <= freedom[k][RANGE]) &&
-		 (i >= 0) && (i <= 7) &&
-		 (j >= 0) && (j <= 7);
+                 (i >= 0) && (i <= 7) &&
+                 (j >= 0) && (j <= 7);
                range++, i += freedom[k][DR], j += freedom[k][DF])
             ray[size++] = assemble(i, j);
           ray[size] = from_square;
@@ -429,8 +429,8 @@ void move(tboard *b, tmove mv) {
   // Now set the new epsquare value, if this was a double pawn push
   b->hashValue ^= zobrist.epZ[b->epsquare];
   b->epsquare = (abs(b->b[mv.from]) == PAWN &&
-                abs(mv.from - mv.to) == 16) ?
-               mv.to : NO_EP_SQUARE;
+                 abs(mv.from - mv.to) == 16) ?
+    mv.to : NO_EP_SQUARE;
   b->hashValue ^= zobrist.epZ[b->epsquare];
 
   // Increase the bishop counts for promotions, decrease for captures
@@ -508,7 +508,7 @@ void legalpawn(tboard* b, tmovelist* m, tmove* mv) {
 }
 
 // If this is the first capture, clear all previous moves
-#define CHECK_FIRST_CAPTURE \
+#define CHECK_FIRST_CAPTURE                           \
   if (no_captures) { m->count = 0; no_captures = 0; }
 
 void getallvalidmoves(tboard* b, tmovelist *m) {
@@ -641,7 +641,7 @@ string move_to_san(tboard* b, tmove m) {
   getallvalidmoves(b, &ml);
   for (int i = 0; i < ml.count; i++)
     if (b->b[ml.move[i].from] == b->b[m.from] &&   // same piece type
-	ml.move[i].to == m.to &&                   // same landing square
+        ml.move[i].to == m.to &&                   // same landing square
         ml.move[i].from != m.from) {               // different start square
       if (file(ml.move[i].from) == file(m.from)) f++;
       if (rank(ml.move[i].from) == rank(m.from)) r++;
@@ -693,17 +693,17 @@ void signalHandler (int sig) {
   timer_expired = 1;
 }
 
-void set_alarm(int centis) {
+void set_alarm(int millis) {
   timer_expired = 0;
-  itimerval value = { { 0, 0 }, { centis / 100, (centis % 100) * 10000 } };
-  info((string)"Alarm set at " + to_string(centis) + " centis");
+  itimerval value = { { 0, 0 }, { millis / 1000, (millis % 1000) * 1000 } };
+  info((string)"Alarm set at " + to_string(millis) + " millis");
   setitimer(ITIMER_REAL, &value, NULL);
 }
 
 void init_zobrist() {
   for (int p = 0; p <= 2 * KING; p++)
     for (int i = 0; i < 64; i++)
-	zobrist.z[p][i] = rand64();
+      zobrist.z[p][i] = rand64();
   zobrist.sideZ = rand64();
   for (int i = 0; i <= NO_EP_SQUARE; i++)
     zobrist.epZ[i] = rand64();

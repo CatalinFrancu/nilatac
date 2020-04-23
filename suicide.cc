@@ -235,12 +235,12 @@ int eval_board(tboard* b, int depth, int alpha, int beta) {
 
 // Makes the best move it finds. If sec is 0, runs a fixed minimum-depth
 // search.
-tmove find_best_move_alpha_beta(tboard* b, tmovelist* m, int centis) {
+tmove find_best_move_alpha_beta(tboard* b, tmovelist* m, int millis) {
   depth_completed = best_score = positions = 0;
   hs_hits = hs_reads = 0;
 
   // Drop the losing moves and half of the surviving moves
-  set_alarm(centis / 2);
+  set_alarm(millis / 2);
   int pns_score = pns_trim_move_list(b, m, 4000000);
   if (pns_score == WIN) {
     kibitz(KIB_WIN, "I got lucky!");
@@ -251,7 +251,7 @@ tmove find_best_move_alpha_beta(tboard* b, tmovelist* m, int centis) {
 
   if (m->count == 1) return m->move[0];
 
-  set_alarm(centis / 3);
+  set_alarm(millis / 3);
   memset(killer, 0, sizeof(killer));
   int values[1000]; // Values of the moves
   int moves_completed = 0;
@@ -305,7 +305,7 @@ tmove find_best_move_alpha_beta(tboard* b, tmovelist* m, int centis) {
     baux = *b;
     move(&baux, m->move[i]);
 
-    set_alarm(centis / 6);
+    set_alarm(millis / 6);
     t_pns_result res = pns_main(&baux, pns_space, 300000, NULL);
     cerr << "[PNS] Doublecheck: " << res.proof << "|" << res.disproof
          << endl;
@@ -386,8 +386,7 @@ int query_egtb(tboard* b, tmove *mv) {
 }
 
 // m - a non-trivial move list (at least two moves to choose from)
-// centis - how much time we're allowed to think
-tmove find_best_move_pns(tboard* b, tmovelist* m, int centis) {
+tmove find_best_move_pns(tboard* b, tmovelist* m) {
   // If we've found a winning line from the book, give ourselves a lot of
   // nodes to make sure we find it (the opening book solves lines down
   // to nodes that are 1000000-pns-solvable)
@@ -481,7 +480,7 @@ tmove find_best_move_pns(tboard* b, tmovelist* m, int centis) {
 // A general routine that does a few generic tasks (like querying the
 // EGTB and the opening book) and then invokes a more specific algorithm
 // to find the best move in a non-trivial position.
-tmove find_best_move(tboard* b, int centis) {
+tmove find_best_move(tboard* b, int millis) {
   // First, look up the position in the EGTB
   if (USE_EGTB && !WEAKENED) {
     if (b->whitecount && b->blackcount && b->whitecount + b->blackcount <= MEN) {
@@ -529,8 +528,8 @@ tmove find_best_move(tboard* b, int centis) {
   if (m.count == 1) return m.move[0];
 
   return WEAKENED
-    ? find_best_move_pns(b, &m, centis)
-    : find_best_move_alpha_beta(b, &m, centis);
+    ? find_best_move_pns(b, &m)
+    : find_best_move_alpha_beta(b, &m, millis);
 }
 
 // Blindly executes the specified move.

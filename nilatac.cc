@@ -34,7 +34,8 @@ inline char* get_token(char* s) {
 
 /**
  * Calculates how much time we can afford to think given our remaining time
- * and increment and the opponent's remaining time. All values are in centis.
+ * and increment and the opponent's remaining time. All values are in
+ * milliseconds.
  */
 int allocate_time(int my_time, int my_inc, int opp_time) {
   // If I have under 5 seconds left, or I am more than 3 seconds behind the
@@ -127,11 +128,10 @@ void parse_go(tboard* b) {
     }
   }
 
-  // convert args to centis
-  int centis = allocate_time(my_time / 10, my_inc / 10, opp_time / 10);
-  info((string)"Thinking for " + to_string(centis) + " centis");
+  int millis = allocate_time(my_time, my_inc, opp_time);
+  info((string)"Thinking for " + to_string(millis) + " millis");
 
-  tmove mv = find_best_move(b, centis);
+  tmove mv = find_best_move(b, millis);
   if (mv.from != -1) { // not stalemate
     cout << "bestmove " << movetostring(mv) << endl << flush;
   }

@@ -27,7 +27,7 @@ void init(const char* book_file_name, const char* egtb_dir_name);
 void restart();
 int canmove(tboard* b);
 void play_opening();
-tmove find_best_move(tboard* b, int centis);
+tmove find_best_move(tboard* b, int millis);
 // returns 0 for success, -1 for error
 int execute_move(char* s, tboard* b);
 
