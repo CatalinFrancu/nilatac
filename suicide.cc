@@ -59,26 +59,26 @@ void kibitz(int kib, const char* reason) {
   switch (kib) {
     case KIB_WIN:
       if (kibitzed != KIB_WIN) {
-        // cout << "kibitz " << reason << endl;
+        cout << "info string kibitz " << reason << endl;
         g_winning_line_found = true;
       }
       break;
     case KIB_DRAW:
       if (kibitzed == KIB_WIN) {
-        // cout << "kibitz You have probably found a bug in me. I should have won "
-        //      << "this game and I missed it. Lucky you!\n";
+        cout << "info string kibitz You have probably found a bug in me. I should have won "
+             << "this game and I missed it." << endl;
       }
       if (kibitzed != KIB_DRAW) {
-        // cout << "kibitz " << reason << endl;
+        cout << "info string kibitz " << reason << endl;
       }
       break;
     case KIB_LOSS:
       if (kibitzed == KIB_WIN || kibitzed == KIB_DRAW) {
-        // cout << "kibitz You have probably found a bug in me. I should have won "
-        //      << "this game and I missed it. Lucky you!\n";
+        cout << "info string kibitz You have probably found a bug in me. I should have won "
+             << "this game and I missed it." << endl;
       }
       if (kibitzed != KIB_LOSS)  {
-        // cout << "kibitz " << reason << endl;
+        cout << "info string kibitz " << reason << endl;
       }
       break;
     default: assert(0);
@@ -243,11 +243,12 @@ tmove find_best_move_alpha_beta(tboard* b, tmovelist* m, int millis) {
   set_alarm(millis / 2);
   int pns_score = pns_trim_move_list(b, m, 4000000);
   if (pns_score == WIN) {
-    kibitz(KIB_WIN, "I got lucky!");
+    kibitz(KIB_WIN, "Forced win found.");
     return m->move[0];
   }
-  if (pns_score == -WIN)
+  if (pns_score == -WIN) {
     kibitz(KIB_LOSS, "Those who are about to die salute you");
+  }
 
   if (m->count == 1) return m->move[0];
 
@@ -431,7 +432,7 @@ tmove find_best_move_pns(tboard* b, tmovelist* m) {
         t_pns_result res = pns_main(resulting_b + i, pns_space, allowed_nodes,
                                     NULL);
         if (!res.disproof) {
-          kibitz(KIB_WIN, "I got lucky!");
+          kibitz(KIB_WIN, "Forced win found.");
           return m->move[i];
         }
         proof[i] = res.proof, disproof[i] = res.disproof;
@@ -452,7 +453,7 @@ tmove find_best_move_pns(tboard* b, tmovelist* m) {
       kibitz(KIB_DRAW, "Dead draw.");
       return m->move[draw_move];
     } else {  // All moves lose, return any one
-      kibitz(KIB_LOSS, "Those who are about to die salute you");
+      kibitz(KIB_LOSS, "Those who are about to die salute you.");
       return m->move[rand() % m->count];
     }
   }
@@ -488,14 +489,14 @@ tmove find_best_move(tboard* b, int millis) {
       int egtb_score = query_egtb(b, &mv);
       if (mv.from != -1) {
         if (egtb_score == EGTB_DRAW) {
-          kibitz(KIB_DRAW, "Precomputed draw");
+          kibitz(KIB_DRAW, "Precomputed draw.");
         } else if (egtb_score >= 0) {
           char s[100];
-          sprintf(s, "Precomputed win in %d moves", egtb_score / 2);
+          sprintf(s, "Precomputed win in %d moves.", egtb_score / 2);
           kibitz(KIB_WIN, s);
         } else if (egtb_score != EGTB_UNKNOWN) {
           char s[100];
-          sprintf(s, "Precomputed loss in %d moves", (1 - egtb_score) / 2);
+          sprintf(s, "Precomputed loss in %d moves.", (1 - egtb_score) / 2);
           kibitz(KIB_LOSS, s);
         } else assert(0);
         return mv;
@@ -509,7 +510,7 @@ tmove find_best_move(tboard* b, int millis) {
     tmove book_move;
     int book_score = query_book(b, &book_move);
     if (book_score == WIN) {
-      kibitz(KIB_WIN, "This opening is a known loss");
+      kibitz(KIB_WIN, "This opening is a known loss.");
       return book_move;
     }
 
