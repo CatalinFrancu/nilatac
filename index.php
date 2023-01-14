@@ -1,6 +1,6 @@
 <?php
 
-require_once 'smarty3/Smarty.class.php';
+require_once 'smarty-4.3.0/Smarty.class.php';
 
 $smarty = new Smarty();
 $smarty->template_dir = 'web/templates';
