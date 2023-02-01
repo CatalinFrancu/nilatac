@@ -81,7 +81,7 @@ extern const char* EMPTY_BOARD;
 
 #define NO_EP_SQUARE 64
 typedef unsigned long long u64;
-typedef unsigned char byte;
+typedef unsigned char u8;
 typedef int boolean;
 typedef struct {
   char b[64];
