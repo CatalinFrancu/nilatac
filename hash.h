@@ -29,10 +29,10 @@ enum { H_LE, H_EQ, H_GE };
 
 typedef struct {
   u64 hash_value;
-  byte depth;
+  u8 depth;
   int value;
-  byte type;
-  byte best_move;
+  u8 type;
+  u8 best_move;
 } t_hash_entry;
 
 extern t_hash_entry* hash_data;

@@ -49,7 +49,7 @@ typedef struct _t_pns_node_ {
   tmove mv;                      // How did we reach this node from its parent
   struct _t_pns_node_* parent;
   struct _t_pns_node_** child;   // The links of this node
-  byte num_children;             // = sizeof(child)
+  u8 num_children;             // = sizeof(child)
   int proof, disproof;           // From the side to move's point of view
   double ratio;
   int size;                      // # of nodes in this tree, including self
