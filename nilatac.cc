@@ -186,7 +186,7 @@ int main(int argc, char* argv[]) {
     if (!strcmp(command, "uci")) {
       printf("id name Nilatac\n");
       printf("id author Cătălin Frâncu\n");
-      printf("option name UCI_Variant type combo default suicide var suicide\n");
+      printf("option name UCI_Variant type combo default antichess var antichess\n");
       printf("uciok\n");
 
     } else if (!strcmp(command, "isready")) {
@@ -196,8 +196,9 @@ int main(int argc, char* argv[]) {
       parse_option(name, value);
       if (!strcasecmp(name, "UCI_Variant")) {
         if (strcasecmp(value, "suicide") &&
+            strcasecmp(value, "antichess") &&
             strcasecmp(value, "giveaway")) {
-          fatal("Nilatac only plays suicide/giveaway");
+          fatal("Nilatac only plays suicide/antichess/giveaway");
         }
       } else {
         // ignore other options
@@ -214,6 +215,9 @@ int main(int argc, char* argv[]) {
 
     } else if (!strcmp(command, "quit")) {
       break;
+
+    } else if (!strcmp(command, "stop")) {
+      info((string)"Ignoring command " + command);
 
     } else {
       fatal((string)"Unknown command " + command);
